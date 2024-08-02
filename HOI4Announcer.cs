@@ -7,6 +7,102 @@ using DSharpPlus.SlashCommands;
 using Microsoft.Extensions.Logging;
 
 namespace hoi4announcer;
+public enum Nations {
+	Afghanistan,
+	Albania,
+	Argentina,
+	Australia,
+	Austria,
+	Belgium,
+	Bhutan,
+	Bolivian_Republic,
+	British_Malaya,
+	British_Raj,
+	Bulgaria,
+	Chile,
+	China,
+	Colombia,
+	Communist_China,
+	Costa_Rica,
+	Cuba,
+	Czechoslovakia,
+	Denmark,
+	Dominican_Republic,
+	Dominion_of_Canada,
+	Dutch_East_Indies,
+	Ecuador,
+	El_Salvador,
+	Estonia,
+	Ethiopia,
+	Finland,
+	France,
+	German_Reich,
+	Guangxi_Clique,
+	Guatemala,
+	Haiti,
+	Honduras,
+	Iceland,
+	Iran,
+	Iraq,
+	Ireland,
+	Italy,
+	Japan,
+	Greece,
+	Hungary,
+	Latvia,
+	Liberia,
+	Lithuania,
+	Luxembourg,
+	Manchukuo,
+	Mengkukuo,
+	Mexico,
+	Mongolia,
+	Nepal,
+	Netherlands,
+	New_Zealand,
+	Nicaragua,
+	Norway,
+	Oman,
+	Panama,
+	Peru,
+	Philippines,
+	Poland,
+	Portugal,
+	Paraguay,
+	Romania,
+	Saudi_Arabia,
+	Brazil,
+	Shanxi,
+	Siam,
+	Sinkiang,
+	South_Africa,
+	Soviet_Union,
+	Spain,
+	Aussa,
+	Sweden,
+	Switzerland,
+	Tannu_Tuva,
+	Tibet,
+	Turkey,
+	United_Kingdom,
+	United_States,
+	Uruguay,
+	Venezuela,
+	Xibei_San_Ma,
+	Yemen,
+	Yugoslavia,
+	Yunnan
+}
+
+public enum Factions {
+	Allies,
+	Axis,
+	Comintern,
+	Independent,
+	Weeb,
+	China_United_Front,
+}
+
 
 internal class Hoi4Announcer 
 {
@@ -34,12 +130,35 @@ internal class Hoi4Announcer
         }
     }
     
-    
+    /// <summary>
+    /// Retrieves the version of the entry assembly as a string in the format "major.minor.build[-revision]".
+    /// </summary>
+    /// <returns>The version of the entry assembly as a string.</returns>
     public static string GetVersion()
     {
         Version version = Assembly.GetEntryAssembly()?.GetName().Version;
         return version?.Major + "." + version?.Minor + "." + version?.Build + (version?.Revision == 0 ? "" : "-" + (char)(64 + version?.Revision ?? 0));
     }
+    
+    /// <summary>
+    /// Reloads the bot by disconnecting the Discord client, loading the config, setting up the Discord client,
+    /// hooking events, registering commands, and connecting to Discord.
+    /// </summary>
+    /// <remarks>
+    /// This method first checks if the Discord client is not null. If it is not null, it disconnects the client,
+    /// disposes of it, and logs that the Discord client has been disconnected. It then loads the config.
+    /// After that, it sets up the Discord client by creating a new `DiscordConfiguration` object and setting
+    /// its properties based on the values in the config. It also checks the log level in the config and sets
+    /// it to `LogLevel.Information` if it is invalid.
+    /// 
+    /// After setting up the Discord client, it hooks events by adding an event handler for the `SessionCreated`
+    /// event of the client. It also registers commands by calling the `UseSlashCommands` method of the client and
+    /// assigning the result to the `commands` field.
+    /// 
+    /// Finally, it connects to Discord by calling the `ConnectAsync` method of the client.
+    /// </remarks>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="ArgumentException">Thrown if the bot token in the config is unset.</exception>
     public static async void Reload()
 	{
 		if (client != null)
@@ -87,7 +206,6 @@ internal class Hoi4Announcer
 
 		Logger.Log("Registering commands...");
 		commands = client.UseSlashCommands();
-
 		//commands.RegisterCommands<AddCategoryCommand>();
 		//commands.RegisterCommands<AddCommand>();
 

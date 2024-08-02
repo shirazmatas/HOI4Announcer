@@ -1,0 +1,17 @@
+﻿allies:
+  - "USA"
+  - "UK"
+  - "British Raj"
+  - "Canada"
+  - "South Africa"
+  - "Australia"
+comintern:
+  - "USSR"
+  - "Mongolia"
+axis:
+  - "Germany"
+  - "Italy"
+  - "Romania"
+  - "Hungary"
+  - "Bulgaria"
+  - "Finland"
