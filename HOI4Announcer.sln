@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hoi4announcer", "hoi4announcer.csproj", "{C2EDB95A-E428-4CC2-AB97-D0EC2D390DF2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HOI4Announcer", "HOI4Announcer.csproj", "{C2EDB95A-E428-4CC2-AB97-D0EC2D390DF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

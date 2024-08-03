@@ -2,7 +2,7 @@
 using System.Reflection;
 
 
-namespace hoi4announcer;
+namespace HOI4Announcer;
 
 public static class Utilities
 {

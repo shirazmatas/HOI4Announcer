@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
-namespace hoi4announcer;
+namespace HOI4Announcer;
 internal enum LogID
 {
     GENERAL,
