@@ -1,7 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
 
-namespace hoi4announcer;
+namespace HOI4Announcer;
 
 public class EventHandler
 {

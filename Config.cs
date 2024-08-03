@@ -7,7 +7,7 @@ using DSharpPlus.Entities;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace hoi4announcer
+namespace HOI4Announcer
 {
 	public class Config
 	{

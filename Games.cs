@@ -1,6 +1,6 @@
-﻿namespace hoi4announcer;
+﻿namespace HOI4Announcer;
 
-public class games
+public class Games
 {
      public static bool HasActiveGame()
      {

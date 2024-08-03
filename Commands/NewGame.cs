@@ -1,6 +1,6 @@
 ﻿using DSharpPlus.SlashCommands;
 
-namespace hoi4announcer.Commands;
+namespace HOI4Announcer.Commands;
 
 public class NewGame
 {

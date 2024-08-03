@@ -1,5 +1,5 @@
 ﻿
-namespace hoi4announcer.Commands;
+namespace HOI4Announcer.Commands;
 
 public class LeaveNation
 {
