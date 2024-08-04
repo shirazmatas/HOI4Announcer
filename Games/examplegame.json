@@ -1,0 +1,20 @@
+{
+  "allies": {
+    "USA": [
+      "DiscordID",
+      "Dick1234"
+    ]
+  },
+  "axis" : {
+    "Germany": [
+      "DiscordID",
+      "Dick1234"
+    ]
+  },
+  "Co-prosp": {
+    "Japan": [
+      "DiscordID",
+      "Dick1234"
+    ]
+  }
+}
