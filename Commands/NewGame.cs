@@ -9,21 +9,21 @@ public class NewGame
 {
     [Command("newgame")]
     [Description("Start a new game")]
-    public async Task OnExecute(CommandContext context, 
-        [Parameter("date")] [Description("YYYY-MM-DD")] string date, 
+    public async Task OnExecute(CommandContext context,
+        [Parameter("date")] [Description("YYYY-MM-DD")] string date,
         [Parameter("time")][Description("HH:MM")] string time)
     {
         try
         {
             string gamesPath = Path.Combine(Directory.GetCurrentDirectory(), "games");
             string currentGamePath = Path.Combine(gamesPath, "currentGame.json");
-            
+
             // Ensure games directory exists
             if (!Directory.Exists(gamesPath))
             {
                 Directory.CreateDirectory(gamesPath);
             }
-            
+
             // Check if there is a current game
             if (File.Exists(currentGamePath))
             {
@@ -31,7 +31,7 @@ public class NewGame
                 string archivedGamePath = Path.Combine(gamesPath, $"{date}-{time.Replace(":", "-")}.json");
                 File.Move(currentGamePath, archivedGamePath);
             }
-            
+
             // Create a new game based on the previous games nations and factions
             // Load nations from nations.yml
             FileStream stream = File.OpenRead("nations.yml");
@@ -53,9 +53,9 @@ public class NewGame
             ISerializer serializer = new SerializerBuilder().JsonCompatible().Build();
             string jsonContent = serializer.Serialize(newGame);
             await File.WriteAllTextAsync(currentGamePath, jsonContent);
-            
+
             // Create discord message for the game and post in channel "game-channel" TODO: Keep track of the message
-            
+
             // Get the game channel ID from config and check if channel exists
             DiscordChannel discordChannel = await context.Client.GetChannelAsync(ConfigParser.config.bot.gameChannel);
             if (discordChannel != null)
@@ -69,7 +69,7 @@ public class NewGame
                     // For each Faction, create the fields with the nations and players.
                     foreach (var faction in newGame)
                     {
-                       var fieldContent = string.Join("\n", faction.nations.Select(n => 
+                       var fieldContent = string.Join("\n", faction.nations.Select(n =>
                         {
                             var nationStr = $"    {n.name}:";
                             if (n.players.Any())
@@ -84,7 +84,7 @@ public class NewGame
                     }
                     DiscordMessage gameMessage = await discordChannel.SendMessageAsync(gameInfo.Build());
             }
-            
+
             await context.RespondAsync($"New game created successfully for {date} at {time}!");
         }
         catch (Exception ex)
