@@ -3,7 +3,6 @@ using System.ComponentModel;
 using DSharpPlus.Entities;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-
 namespace HOI4Announcer.Commands;
 
 public class NewGame
@@ -66,7 +65,7 @@ public class NewGame
                     .WithTitle("HOI4 Current Game")
                     .WithColor(DiscordColor.Green)
                     .WithDescription($"Game on {date} at {time}!") // TODO: Local time
-                    .WithFooter("This action was done by KARL (Kaotic Artifical Rider LLM)");
+                    .WithFooter("This action was done by KARL (Kaotic Artificial Rider LLM)");
                     // For each Faction, create the fields with the nations and players.
                     foreach (var faction in newGame)
                     {
@@ -83,12 +82,10 @@ public class NewGame
 
                         gameInfo.AddField(faction.faction, string.IsNullOrEmpty(fieldContent) ? "No nations" : fieldContent);
                     }
-
-                    await discordChannel.SendMessageAsync(gameInfo.Build());
+                    DiscordMessage gameMessage = await discordChannel.SendMessageAsync(gameInfo.Build());
             }
             
             await context.RespondAsync($"New game created successfully for {date} at {time}!");
-            // TODO: CHANGE THIS logic
         }
         catch (Exception ex)
         {

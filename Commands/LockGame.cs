@@ -1,20 +1,9 @@
 ﻿namespace HOI4Announcer.Commands;
 
 /// <summary>
-using DSharpPlus.Commands;
-using DSharpPlus.Commands.ContextChecks;
-using System.ComponentModel;
-
-namespace HOI4Announcer;
-
-/// <summary>
-///  Should lock the game so that no changes to roster can be done by others than those with the moderator role
-/// </summary>
-public class LockGame
-{
     [Command("lockgame")]
     [Description("Lock the game so that only moderators can make changes to the roster")]
-    [RequirePermissions(DSharpPlus.Permissions.ManageGuild)] // Change this
+    [RequirePermissions(DSharpPlus.Permissions.ManageGuild)]
     public async Task OnExecute(CommandContext context)
     {
         try
@@ -26,7 +15,6 @@ public class LockGame
             }
 
             string path = Path.Combine(Directory.GetCurrentDirectory(), "games");
-            string filepath = Path.Combine(path, "currentGame.json");
             string lockfilepath = Path.Combine(path, "game.lock");
 
             if (File.Exists(lockfilepath))
@@ -35,12 +23,20 @@ public class LockGame
                 return;
             }
 
+            // Ensure the games directory exists
+            Directory.CreateDirectory(path);
+            
             File.WriteAllText(lockfilepath, "locked");
-            await context.RespondAsync("Game has been locked. Only moderators can make changes to the roster.");
+            await context.RespondAsync("✅ Game has been locked. Only moderators can make changes to the roster.");
         }
         catch (Exception ex)
         {
-            await context.RespondAsync($"Error locking game: {ex.Message}");
+            await context.RespondAsync($"❌ Error locking game: {ex.Message}");
         }
     }
+}
+/// </summary>
+public class LockGame
+{
+    
 }
