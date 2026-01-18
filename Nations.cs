@@ -92,6 +92,6 @@ public enum Factions {
     Axis,
     Comintern,
     Independent,
-    Weeb,
+    GEACS,
     China_United_Front,
 }
