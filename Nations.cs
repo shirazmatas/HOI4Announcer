@@ -1,6 +1,6 @@
 namespace HOI4Announcer;
 
-public enum Nations {
+public enum NationID {
     Afghanistan,
     Albania,
     Argentina,
