@@ -1,5 +1,6 @@
 ﻿using DSharpPlus.Commands;
 using System.ComponentModel;
+using DSharpPlus.Entities;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -27,9 +28,6 @@ public class NewGame
             // Check if there is a current game
             if (File.Exists(currentGamePath))
             {
-                // Load data from currentGame.json
-                string currentGameData = await File.ReadAllTextAsync(currentGamePath);
-                
                 // Rename currentGame.json to date-time.json (of that game)
                 string archivedGamePath = Path.Combine(gamesPath, $"{date}-{time.Replace(":", "-")}.json");
                 File.Move(currentGamePath, archivedGamePath);
@@ -40,26 +38,53 @@ public class NewGame
             FileStream stream = File.OpenRead("nations.yml");
             IDeserializer deserializer = new DeserializerBuilder().WithNamingConvention(HyphenatedNamingConvention.Instance).Build();
             var nationsData = deserializer.Deserialize<Dictionary<string, List<string>>>(new StreamReader(stream));
-            
-            // Create new game object with nations but no players
-            var newGame = new
+
+            // Create new game object with nations but no players, matching the new format
+            var newGame = nationsData.Select(faction => new
             {
-                date = date,
-                time = time,
-                nations = nationsData,
-                players = new List<object>()
-            };
-            
+                faction = faction.Key,
+                nations = faction.Value.Select(nation => new
+                {
+                    name = nation,
+                    players = new List<object>()
+                }).ToList()
+            }).ToList();
+
             // Save the new game as currentGame.json
             ISerializer serializer = new SerializerBuilder().JsonCompatible().Build();
             string jsonContent = serializer.Serialize(newGame);
             await File.WriteAllTextAsync(currentGamePath, jsonContent);
             
             // Create discord message for the game and post in channel "game-channel" TODO: Keep track of the message
-            var channel = context.Guild.Channels.Values.FirstOrDefault(c => c.Name == "game-channel");
-            if (channel != null)
+            
+            // Get the game channel ID from config and check if channel exists
+            DiscordChannel discordChannel = await context.Client.GetChannelAsync(ConfigParser.config.bot.gameChannel);
+            if (discordChannel != null)
             {
-                await channel.SendMessageAsync($"New game started for {date} at {time}!");
+                DiscordEmbedBuilder gameInfo = new DiscordEmbedBuilder().WithAuthor("HOI4 Announcer", null,
+                        "https://cdn2.steamgriddb.com/icon_thumb/e2d988c728d061b916697ba7f095f98c.png")
+                    .WithTitle("HOI4 Current Game")
+                    .WithColor(DiscordColor.Green)
+                    .WithDescription($"Game on {date} at {time}!") // TODO: Local time
+                    .WithFooter("This action was done by KARL (Kaotic Artifical Rider LLM)");
+                    // For each Faction, create the fields with the nations and players.
+                    foreach (var faction in newGame)
+                    {
+                       var fieldContent = string.Join("\n", faction.nations.Select(n => 
+                        {
+                            var nationStr = $"    {n.name}:";
+                            if (n.players.Any())
+                            {
+                                var playersStr = string.Join("\n", n.players.Select(p => $"            - {p}"));
+                                return $"{nationStr}\n{playersStr}";
+                            }
+                            return $"{nationStr}\n            -";
+                        }));
+
+                        gameInfo.AddField(faction.faction, string.IsNullOrEmpty(fieldContent) ? "No nations" : fieldContent);
+                    }
+
+                    await discordChannel.SendMessageAsync(gameInfo.Build());
             }
             
             await context.RespondAsync($"New game created successfully for {date} at {time}!");
