@@ -1,14 +1,16 @@
-﻿namespace HOI4Announcer.Commands;
+﻿using System.ComponentModel;
+using DSharpPlus.Commands;
 
-/// <summary>
+namespace HOI4Announcer.Commands;
+public class LockGame
+{
     [Command("lockgame")]
     [Description("Lock the game so that only moderators can make changes to the roster")]
-    [RequirePermissions(DSharpPlus.Permissions.ManageGuild)]
     public async Task OnExecute(CommandContext context)
     {
         try
         {
-            if (!Games.HasActiveGame())
+            if (!GameHandler.HasActiveGame())
             {
                 await context.RespondAsync("No active game to lock.");
                 return;
@@ -25,7 +27,7 @@
 
             // Ensure the games directory exists
             Directory.CreateDirectory(path);
-            
+
             File.WriteAllText(lockfilepath, "locked");
             await context.RespondAsync("✅ Game has been locked. Only moderators can make changes to the roster.");
         }
@@ -34,9 +36,4 @@
             await context.RespondAsync($"❌ Error locking game: {ex.Message}");
         }
     }
-}
-/// </summary>
-public class LockGame
-{
-    
 }

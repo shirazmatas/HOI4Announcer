@@ -2,7 +2,8 @@
 
 namespace HOI4Announcer;
 
-public class GameHandler
+// Controls the games folder and loads/saves games
+public static class GameHandler
 {
      public class Faction
      {
@@ -28,6 +29,7 @@ public class GameHandler
           internal string serverID;
           internal string serverPassword;
           internal List<Faction> factions;
+          internal bool locked;
      }
 
      private static Game currentGame = null;
@@ -104,5 +106,37 @@ public class GameHandler
           nationFound = true;
 
           SaveCurrentGame();
+     }*/
+
+     public static void LockGame() // TODO: Review Code
+     {
+          if (HasActiveGame())
+          {
+               // Write in game.lock
+               currentGame.locked = true;
+               SaveCurrentGame();
+               // Change the discord message to display a locked emoji
+               // TODO: Change discord message
+          }
+     }
+
+     public static void UnlockGame() // TODO: Review Code
+     {
+          if (HasActiveGame())
+          {
+               string lockFilePath = $"{Directory.GetCurrentDirectory()}/games/game.lock";
+
+               // Check if lock file exists
+               if (File.Exists(lockFilePath))
+               {
+                    // Delete the lock file
+                    File.Delete(lockFilePath);
+               }
+
+               currentGame.locked = false;
+               SaveCurrentGame();
+
+               // TODO: Change discord message to remove locked emoji
+          }
      }
 }
