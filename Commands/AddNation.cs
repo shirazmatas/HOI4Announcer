@@ -1,13 +1,16 @@
-﻿using DSharpPlus.SlashCommands;
+﻿using DSharpPlus.Commands;
+using DSharpPlus.Commands.ContextChecks;
+using System.ComponentModel;
 
 namespace HOI4Announcer.Commands;
 
 public class AddNation
 {
-    [SlashCommand("addnation", "Add a nation to the roster")]
-    public async Task OnExecute(InteractionContext command,
-                                [Option("nation", "The nation to add")] Nations nation,
-                                [Option("faction", "The faction of the nation")] Factions faction)
+    [Command("addnation")]
+    [Description("Add a nation to the roster of playable nations")]
+    public async Task OnExecute(CommandContext context,
+        [Parameter("nation")][Description("The nation to add")] Nations nation,
+        [Parameter("faction")][Description("The faction of the nation")] Factions faction)
     {
 
         try

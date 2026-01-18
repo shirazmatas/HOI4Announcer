@@ -1,4 +1,7 @@
-﻿namespace HOI4Announcer;
+﻿using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+
+namespace HOI4Announcer;
 
 public class Games
 {
@@ -31,7 +34,7 @@ public class Games
 
                // Converts the FileStream into a YAML object (Young Adult Male Losers)
                IDeserializer deserializer = new DeserializerBuilder().WithNamingConvention(HyphenatedNamingConvention.Instance).Build();
-               config = deserializer.Deserialize<Config>(new StreamReader(stream));
+                nations = deserializer.Deserialize<Config>(new StreamReader(stream));
                
                // Create new json file
                File.WriteAllText(filepath, "{}");

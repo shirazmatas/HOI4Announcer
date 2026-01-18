@@ -1,13 +1,15 @@
-﻿using DSharpPlus.SlashCommands;
+﻿using DSharpPlus.Commands;
+using System.ComponentModel;
 
 namespace HOI4Announcer.Commands;
 
 public class NewGame
 {
-    [SlashCommand("newgame", "Start a new game")]
-    public async Task OnExecute(InteractionContext command, 
-        [Option("date","YYYY-MM-DD")] string date, 
-        [Option("time","HH:MM")] string time)
+    [Command("newgame")]
+    [Description("Start a new game")]
+    public async Task OnExecute(CommandContext context, 
+        [Parameter("date")] [Description("YYYY-MM-DD")] string date, 
+        [Parameter("time")][Description("HH:MM")] string time)
     {
         // Look inside games folder for most recent game
         // Will be called "currentGame.json"
