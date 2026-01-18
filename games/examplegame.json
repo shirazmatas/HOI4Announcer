@@ -1,0 +1,23 @@
+{
+  "start-date": "",
+  "factions":
+  [
+    {
+      "name": "Axis",
+      "nations":
+      [
+        {
+          "name": "Germany",
+          "players":
+          [
+            {
+              "name": "Shiraz",
+              "id": 105670070990036992
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
