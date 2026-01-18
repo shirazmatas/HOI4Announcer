@@ -1,38 +1,39 @@
-﻿// See https://aka.ms/new-console-template for more information
-
+﻿// Main file
 using System.Reflection;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
-using DSharpPlus.SlashCommands;
+using DSharpPlus.Commands;
+using DSharpPlus.Commands.Processors.SlashCommands;
+using DSharpPlus.Entities;
+using HOI4Announcer.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace HOI4Announcer;
 
-internal class Hoi4Announcer
+
+internal class HOI4Announcer
 {
-    public static DiscordClient client = new DiscordClient(new DiscordConfiguration {Token = "DUMMY_TOKEN", TokenType = TokenType.Bot, MinimumLogLevel = LogLevel.Debug, Intents = DiscordIntents.AllUnprivileged});
-    private static SlashCommandsExtension commands = null; // The slash commands extension.
-    private static void Main(string[] args)
-    {
-        // Create the slash commands extension.
-        commands = client.UseSlashCommands();
-	}
-    private static async Task MainAsync()
+	internal const string ApplicationName = "HOI4Announcer";
+	private static DiscordClient _client = null;
+    private static async Task<int> Main(string[] args) 
     {
         Logger.Log("Starting " + Assembly.GetEntryAssembly()?.GetName().Name + " version " + GetVersion() + "...");
         try
         {
 	        Reload();
-
+	        await Connect();
 	        // Block this task until the program is closed.
 	        await Task.Delay(-1);
+	        return 0;
         }
         catch (Exception e)
         {
 	        Logger.Fatal("Fatal error:\n" + e);
 	        Console.ReadLine();
+	        return 1;
         }
-    }
+	}
 
     /// <summary>
     /// Retrieves the version of the entry assembly as a string in the format "major.minor.build[-revision]".
@@ -65,17 +66,17 @@ internal class Hoi4Announcer
     /// <exception cref="ArgumentException">Thrown if the bot token in the config is unset.</exception>
     public static async void Reload()
 	{
-		if (client != null)
+		if (_client != null)
 		{
-			await client.DisconnectAsync();
-			client.Dispose();
+			await _client.DisconnectAsync();
+			_client.Dispose();
 			Logger.Log("Discord client disconnected.");
 		}
 
 		Logger.Log("Loading config \"" + Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "config.yml\"");
 		ConfigParser.LoadConfig();
 
-		// Check if token is unset
+		// Check if the token is unset
 		if (ConfigParser.config.bot.token is "<add-token-here>" or "")
 		{
 			Logger.Fatal("You need to set your bot token in the config and start the bot again.");
@@ -87,39 +88,72 @@ internal class Hoi4Announcer
 		// Checking log level
 		if (!Enum.TryParse(ConfigParser.config.bot.logLevel, true, out LogLevel logLevel))
 		{
-			Logger.Warn("Log level '" + ConfigParser.config.bot.logLevel + "' invalid, using 'Information' instead.", LogID.CONFIG);
+			Logger.Warn("Log level '" + ConfigParser.config.bot.logLevel + "' invalid, using 'Information' instead.");
 			logLevel = LogLevel.Information;
 		}
-
-		// Setting up client configuration
-		DiscordConfiguration cfg = new DiscordConfiguration
-		{
-			Token = ConfigParser.config.bot.token,
-			TokenType = TokenType.Bot,
-			MinimumLogLevel = logLevel,
-			AutoReconnect = true,
-			Intents = DiscordIntents.All
-		};
-
-		client = new DiscordClient(cfg);
-
-		Logger.Log("Hooking events...");
-
-		client.SessionCreated += EventHandler.OnReady;
-
-
-		Logger.Log("Registering commands...");
-		commands = client.UseSlashCommands();
-		//commands.RegisterCommands<AddCategoryCommand>();
-		//commands.RegisterCommands<AddCommand>();
-
-		Logger.Log("Hooking command events...");
-		//commands.SlashCommandErrored += EventHandler.OnCommandError;
-
-		Logger.Log("Connecting to Discord...");
-		await client.ConnectAsync();
-
 	}
+    private static async Task<bool> Connect()
+    {
+        Logger.Log("Setting up Discord client.");
+        DiscordClientBuilder clientBuilder = DiscordClientBuilder.CreateDefault(
+		        ConfigParser.config.bot.token, 
+		        DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers)
+                                                                 .SetReconnectOnFatalGatewayErrors();
+
+        clientBuilder.ConfigureServices(configure =>
+        {
+            configure.AddSingleton<IClientErrorHandler>(new EventHandler.ErrorHandler());
+        });
+
+        clientBuilder.ConfigureEventHandlers(builder =>
+        {
+            builder.HandleGuildDownloadCompleted(EventHandler.OnReady);
+            builder.HandleGuildAvailable(EventHandler.OnGuildAvailable);
+        });
+
+        clientBuilder.UseCommands((_, extension) =>
+        {
+            extension.AddCommands(
+            [
+                typeof(AddNation),
+                typeof(NewGame)
+            ]);
+            extension.AddProcessor(new SlashCommandProcessor());
+            extension.CommandErrored += EventHandler.OnCommandError;
+        }, new CommandsConfiguration
+        {
+            RegisterDefaultCommandProcessors = false,
+            UseDefaultCommandErrorHandler = false
+        });
+
+        clientBuilder.ConfigureExtraFeatures(clientConfig =>
+        {
+            clientConfig.LogUnknownEvents = false;
+            clientConfig.LogUnknownAuditlogs = false;
+        });
+
+        clientBuilder.ConfigureLogging(config =>
+        {
+            config.AddProvider(new LoggerProvider());
+        });
+
+        _client = clientBuilder.Build();
+
+        Logger.Log("Connecting to Discord.");
+        EventHandler.hasLoggedGuilds = false;
+
+        try
+        {
+            await _client.ConnectAsync();
+        }
+        catch (Exception e)
+        {
+            Logger.Fatal("Error occured while connecting to Discord.", e);
+            return false;
+        }
+
+        return true;
+    }
 
 
 }
