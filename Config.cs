@@ -29,7 +29,7 @@ namespace HOI4Announcer
 
 		public static void LoadConfig()
 		{
-			Logger.Log("Loading config \"" + Path.GetFullPath(configPath) + "\"", LogID.CONFIG);
+			Logger.Log("Loading config \"" + Path.GetFullPath(configPath) + "\"");
 
 			// Writes default config to file if it does not already exist
 			if (!File.Exists(configPath))
@@ -50,13 +50,13 @@ namespace HOI4Announcer
 		{
 			foreach (DiscordRole role in member.Roles)
 			{
-				Logger.Debug("checking if " + member.Username + " is a staff member", LogID.CONFIG);
+				Logger.Debug("checking if " + member.Username + " is a staff member");
 				if (config.bot.staffRoles.Contains(role.Id) || config.bot.staffRoles.Contains(0))
 				{
 					return true;
 				}
 			}
-			Logger.Debug(member.Username + " is not staff.", LogID.CONFIG);
+			Logger.Debug(member.Username + " is not staff.");
 			return false;
 		}
 		
@@ -64,13 +64,13 @@ namespace HOI4Announcer
 		{
 			foreach (DiscordRole role in member.Roles)
 			{
-				Logger.Debug("checking if " + member.Username + " is a user", LogID.CONFIG);
+				Logger.Debug("checking if " + member.Username + " is a user");
 				if (config.bot.userRoles.Contains(role.Id) || config.bot.userRoles.Contains(0))
 				{
 					return true;
 				}
 			}
-			Logger.Debug(member.Username + " is not a user.", LogID.CONFIG);
+			Logger.Debug(member.Username + " is not a user.");
 			return false;
 		}
 	}
