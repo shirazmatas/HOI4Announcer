@@ -1,5 +1,4 @@
-﻿using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
+﻿using Newtonsoft.Json;
 
 namespace HOI4Announcer;
 
@@ -31,27 +30,55 @@ public class GameHandler
           internal List<Faction> factions;
      }
 
+     private static Game currentGame = null;
+
      public static bool HasActiveGame()
      {
-          return File.Exists(Directory.GetCurrentDirectory() + "/games/currentGame.json");
+          return currentGame != null;
      }
 
-     public Game LoadGame(string fileName = "currentGame.json")
+     public static void LoadCurrentGame()
      {
-          FileStream stream = File.OpenRead($"{Directory.GetCurrentDirectory()}/games/{fileName}");
-
-          IDeserializer deserializer = new DeserializerBuilder().WithNamingConvention(HyphenatedNamingConvention.Instance).Build();
-          return deserializer.Deserialize<Game>(new StreamReader(stream));
+         currentGame = LoadGame("currentGame.json");
      }
 
-     public void NewGame()
+     public static Game LoadGame(string fileName)
+     {
+          if (!File.Exists($"{Directory.GetCurrentDirectory()}/games/{fileName}"))
+          {
+               return null;
+          }
+
+          try
+          {
+               return JsonConvert.DeserializeObject<Game>(File.ReadAllText($"{Directory.GetCurrentDirectory()}/games/{fileName}"));
+          }
+          catch (Exception e)
+          {
+               Logger.Error($"Unable to load game file \"{Directory.GetCurrentDirectory()}/games/{fileName}\"", e);
+          }
+
+          return null;
+     }
+
+     public static void SaveCurrentGame()
+     {
+          if (currentGame != null)
+          {
+               SaveGame(currentGame, "currentGame.json");
+          }
+     }
+
+     public static void SaveGame(Game game, string fileName)
+     {
+          File.WriteAllText($"{Directory.GetCurrentDirectory()}/games/{fileName}", JsonConvert.SerializeObject(game));
+     }
+
+     public static void NewGame()
      {
           if (!HasActiveGame())
           {
-
-
-               // Create new json file
-               File.WriteAllText(filepath, "{}");
+               // create new game from template in the factions config
           }
           else
           {
@@ -61,9 +88,6 @@ public class GameHandler
 
      public void AddUser(ulong discordID, string nation)
      {
-          // Load the current game
-          Game currentGame = LoadGame();
-
           // Search for the nation in all factions
           if (!NationExists(nation, currentGame))
           {
@@ -79,11 +103,6 @@ public class GameHandler
           nat.players.Add(newPlayer);
           nationFound = true;
 
-          // Save the updated game back to file
-          string filepath = $"{Directory.GetCurrentDirectory()}/games/currentGame.json";
-          ISerializer serializer = new SerializerBuilder()
-               .WithNamingConvention(HyphenatedNamingConvention.Instance)
-               .Build();
-          File.WriteAllText(filepath, serializer.Serialize(currentGame));
+          SaveCurrentGame();
      }
 }

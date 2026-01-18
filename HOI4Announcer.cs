@@ -14,26 +14,26 @@ namespace HOI4Announcer;
 
 internal class HOI4Announcer
 {
-	internal const string ApplicationName = "HOI4Announcer";
-	private static DiscordClient _client = null;
-    private static async Task<int> Main(string[] args) 
+    internal const string ApplicationName = "HOI4Announcer";
+    private static DiscordClient _client = null;
+    private static async Task<int> Main(string[] args)
     {
         Logger.Log("Starting " + Assembly.GetEntryAssembly()?.GetName().Name + " version " + GetVersion() + "...");
         try
         {
-	        Reload();
-	        await Connect();
-	        // Block this task until the program is closed.
-	        await Task.Delay(-1);
-	        return 0;
+            Reload();
+            await Connect();
+            // Block this task until the program is closed.
+            await Task.Delay(-1);
+            return 0;
         }
         catch (Exception e)
         {
-	        Logger.Fatal("Fatal error:\n" + e);
-	        Console.ReadLine();
-	        return 1;
+            Logger.Fatal("Fatal error:\n" + e);
+            Console.ReadLine();
+            return 1;
         }
-	}
+    }
 
     /// <summary>
     /// Retrieves the version of the entry assembly as a string in the format "major.minor.build[-revision]".
@@ -65,39 +65,40 @@ internal class HOI4Announcer
     /// <returns>A task representing the asynchronous operation.</returns>
     /// <exception cref="ArgumentException">Thrown if the bot token in the config is unset.</exception>
     public static async void Reload()
-	{
-		if (_client != null)
-		{
-			await _client.DisconnectAsync();
-			_client.Dispose();
-			Logger.Log("Discord client disconnected.");
-		}
+    {
+        if (_client != null)
+        {
+            await _client.DisconnectAsync();
+            _client.Dispose();
+            Logger.Log("Discord client disconnected.");
+        }
 
-		Logger.Log("Loading config \"" + Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "config.yml\"");
-		ConfigParser.LoadConfig();
+        Logger.Log("Loading config \"" + Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "config.yml\"");
+        ConfigParser.LoadConfig();
 
-		// Check if the token is unset
-		if (ConfigParser.config.bot.token is "<add-token-here>" or "")
-		{
-			Logger.Fatal("You need to set your bot token in the config and start the bot again.");
-			throw new ArgumentException("Invalid Discord bot token");
-		}
+        // Check if the token is unset
+        if (ConfigParser.config.bot.token is "<add-token-here>" or "")
+        {
+            Logger.Fatal("You need to set your bot token in the config and start the bot again.");
+            throw new ArgumentException("Invalid Discord bot token");
+        }
 
-		Logger.Log("Setting up Discord client...");
+        Logger.Log("Setting up Discord client...");
 
-		// Checking log level
-		if (!Enum.TryParse(ConfigParser.config.bot.logLevel, true, out LogLevel logLevel))
-		{
-			Logger.Warn("Log level '" + ConfigParser.config.bot.logLevel + "' invalid, using 'Information' instead.");
-			logLevel = LogLevel.Information;
-		}
-	}
+        // Checking log level
+        if (!Enum.TryParse(ConfigParser.config.bot.logLevel, true, out LogLevel logLevel))
+        {
+            Logger.Warn("Log level '" + ConfigParser.config.bot.logLevel + "' invalid, using 'Information' instead.");
+            logLevel = LogLevel.Information;
+        }
+
+        FactionsHandler.Load();
+    }
     private static async Task<bool> Connect()
     {
         Logger.Log("Setting up Discord client.");
-        DiscordClientBuilder clientBuilder = DiscordClientBuilder.CreateDefault(
-		        ConfigParser.config.bot.token, 
-		        DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers)
+        DiscordClientBuilder clientBuilder = DiscordClientBuilder.CreateDefault(ConfigParser.config.bot.token,
+                DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers)
                                                                  .SetReconnectOnFatalGatewayErrors();
 
         clientBuilder.ConfigureServices(configure =>

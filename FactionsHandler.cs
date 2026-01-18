@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json;
 
 namespace HOI4Announcer;
 
@@ -20,18 +20,37 @@ public static class FactionsHandler
         public List<Faction> factions { get; set; }
     }
 
-    public static FactionsConfig config;
-
-    private static readonly JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
+    public static FactionsConfig config { get; private set; } = null;
 
     public static void Load()
     {
-        config = JsonSerializer.Deserialize<FactionsConfig>(File.ReadAllText($"{Directory.GetCurrentDirectory()}/factions.json"));
+        Logger.Log("Loading factions config \"" + Directory.GetCurrentDirectory() + "/factions.json\"");
+        config = JsonConvert.DeserializeObject<FactionsConfig>(File.ReadAllText($"{Directory.GetCurrentDirectory()}/factions.json"));
     }
 
     public static void Save()
     {
-        File.WriteAllText($"{Directory.GetCurrentDirectory()}/factions.json", JsonSerializer.Serialize(config, serializerOptions));
+        File.WriteAllText($"{Directory.GetCurrentDirectory()}/factions.json", JsonConvert.SerializeObject(config));
+    }
+
+    public static void AddFaction(string name)
+    {
+        // Make sure only one faction with the same name can exist
+    }
+
+    public static void RemoveFaction(string name)
+    {
+
+    }
+
+    public static void AddNation(string faction, string nation)
+    {
+        // Make sure a nation can only be in one faction
+    }
+
+    public static void RemoveNation(string faction)
+    {
+
     }
 }
 
