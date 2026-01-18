@@ -19,9 +19,6 @@ public class AddNation
         try
         {
             //if (nation in ActiveNations)
-            //{
-            //
-            //}
             // Check if nation is listed in allowed nations (exist in HOI4)
             FileStream stream = File.OpenRead("nations.yml");
             IDeserializer deserializer = new DeserializerBuilder()
@@ -43,13 +40,13 @@ public class AddNation
             if (!nationExists)
             {
                 // Check if game exists
-                if (Games.HasActiveGame())
+                if (GameHandler.HasActiveGame())
                 {
                     // Add also to currentGame.json
                 }
 
-                // Add to nations.yml
-                Games.AddNation(nation, faction);
+                FactionsHandler.AddNation(faction.ToString(), nationName.ToString());
+                //GameHandler.AddNation(nation, faction);
                 await context.RespondAsync($"Nation {nationName} has been added to the roster.");
                 return;
             }
