@@ -1,0 +1,77 @@
+﻿{
+  "factions":
+  [
+    {
+      "name": "Allies",
+      "nations":
+      [
+        {
+          "name": "USA"
+        },
+        {
+          "name": "UK"
+        },
+        {
+          "name": "British Raj"
+        },
+        {
+          "name": "Canada"
+        },
+        {
+          "name": "South Africa"
+        },
+        {
+          "name": "Australia"
+        }
+      ]
+    },
+    {
+      "name": "Comintern",
+      "nations":
+      [
+        {
+          "name": "USSR"
+        },
+        {
+          "name": "Mongolia"
+        }
+      ]
+    },
+    {
+      "name": "Axis",
+      "nations":
+      [
+        {
+          "name": "Germany"
+        },
+        {
+          "name": "Italy"
+        },
+        {
+          "name": "Romania"
+        },
+        {
+          "name": "Hungary"
+        },
+        {
+          "name": "Bulgaria"
+        },
+        {
+          "name": "Finland"
+        }
+      ]
+    },
+    {
+      "name": "Co-Prosperity",
+      "nations":
+      [
+        {
+          "name": "Japan"
+        },
+        {
+          "name": "Manchukuo"
+        }
+      ]
+    }
+  ]
+}
