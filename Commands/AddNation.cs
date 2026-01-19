@@ -1,8 +1,5 @@
 ﻿using DSharpPlus.Commands;
-using DSharpPlus.Commands.ContextChecks;
 using System.ComponentModel;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace HOI4Announcer.Commands;
 
@@ -11,50 +8,32 @@ public class AddNation
     [Command("addnation")]
     [Description("Add a nation to the roster of playable nations")]
     public async Task OnExecute(CommandContext context,
-        [Parameter("nation")][Description("The nation to add")] NationID nation,
-        [Parameter("faction")][Description("The faction of the nation")] Factions faction,
+        [Parameter("nation")][Description("The nation to add")] NationID nationID,
+        [Parameter("faction")][Description("The faction of the nation")] FactionID factionID,
         [Parameter("maxplayers")] [Description("The maximum number of players allowed for this nation")] int maxPlayers = 1)
     {
+        FactionsConfig.Faction faction = FactionsHandler.GetFaction(factionID);
 
-        try
+        if (faction == null)
         {
-            //if (nation in ActiveNations)
-            // Check if nation is listed in allowed nations (exist in HOI4)
-            FileStream stream = File.OpenRead("nations.yml");
-            IDeserializer deserializer = new DeserializerBuilder()
-                .WithNamingConvention(HyphenatedNamingConvention.Instance).Build();
-            var nationsData = deserializer.Deserialize<Dictionary<string, List<string>>>(new StreamReader(stream));
-
-            bool nationExists = false;
-            string nationName = nation.ToString();
-
-            foreach (var factionList in nationsData.Values)
-            {
-                if (factionList.Contains(nationName))
-                {
-                    nationExists = true;
-                    break;
-                }
-            }
-
-            if (!nationExists)
-            {
-                // Check if game exists
-                if (GameHandler.HasActiveGame())
-                {
-                    // Add also to currentGame.json
-                }
-
-                FactionsHandler.AddNation(faction.ToString(), nationName.ToString());
-                //GameHandler.AddNation(nation, faction);
-                await context.RespondAsync($"Nation {nationName} has been added to the roster.");
-                return;
-            }
-
+            await context.RespondAsync($"Error: Faction {factionID} does not exist.");
+            return;
         }
-        catch (Exception)
+
+        if (faction.nations.Any(n => n.id == nationID))
         {
-
+            await context.RespondAsync($"Error: Nation {nationID.ToFriendlyString()} already exists in faction {factionID.ToFriendlyString()}.");
+            return;
         }
+
+        FactionsHandler.AddNation(faction.id, nationID);
+
+        if (GameHandler.HasActiveGame())
+        {
+            // Add also to currentGame.json
+            //GameHandler.AddNation(nation, faction);
+        }
+
+        await context.RespondAsync($"Nation {nationID.ToFriendlyString()} has been added to the {factionID.ToFriendlyString()} faction.");
     }
 }

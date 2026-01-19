@@ -5,6 +5,8 @@ using System.Text.Json;
 
 namespace HOI4Announcer;
 
+
+
 public static class Utilities
 {
     public static readonly JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };

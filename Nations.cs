@@ -87,11 +87,17 @@ public enum NationID {
     Yunnan
 }
 
-public enum Factions {
+public enum FactionID {
     Allies,
     Axis,
     Comintern,
     Independent,
     GEACS,
     China_United_Front,
+}
+
+public static class Extensions
+{
+    public static string ToFriendlyString(this NationID nation) => nation.ToString().Replace("_", " ");
+    public static string ToFriendlyString(this FactionID faction) => faction.ToString().Replace("_", " ");
 }

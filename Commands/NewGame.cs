@@ -1,8 +1,6 @@
 ﻿using DSharpPlus.Commands;
 using System.ComponentModel;
 using DSharpPlus.Entities;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 namespace HOI4Announcer.Commands;
 
 public class NewGame
@@ -15,44 +13,18 @@ public class NewGame
     {
         try
         {
-            string gamesPath = Path.Combine(Directory.GetCurrentDirectory(), "games");
-            string currentGamePath = Path.Combine(gamesPath, "currentGame.json");
-
-            // Ensure games directory exists
-            if (!Directory.Exists(gamesPath))
+            if (!DateTime.TryParse($"{date} {time}", out DateTime startTime))
             {
-                Directory.CreateDirectory(gamesPath);
+                await context.RespondAsync("Invalid date or time format. Please use YYYY-MM-DD and HH:MM.");
+                return;
             }
 
-            // Check if there is a current game
-            if (File.Exists(currentGamePath))
+            var newGame = GameHandler.NewGame(startTime, date, time);
+            if (newGame == null)
             {
-                // Rename currentGame.json to date-time.json (of that game)
-                string archivedGamePath = Path.Combine(gamesPath, $"{date}-{time.Replace(":", "-")}.json");
-                File.Move(currentGamePath, archivedGamePath);
+                await context.RespondAsync("Failed to create new game. Check logs for details.");
+                return;
             }
-
-            // Create a new game based on the previous games nations and factions
-            // Load nations from nations.yml
-            FileStream stream = File.OpenRead("nations.yml");
-            IDeserializer deserializer = new DeserializerBuilder().WithNamingConvention(HyphenatedNamingConvention.Instance).Build();
-            var nationsData = deserializer.Deserialize<Dictionary<string, List<string>>>(new StreamReader(stream));
-
-            // Create new game object with nations but no players, matching the new format
-            var newGame = nationsData.Select(faction => new
-            {
-                faction = faction.Key,
-                nations = faction.Value.Select(nation => new
-                {
-                    name = nation,
-                    players = new List<object>()
-                }).ToList()
-            }).ToList();
-
-            // Save the new game as currentGame.json
-            ISerializer serializer = new SerializerBuilder().JsonCompatible().Build();
-            string jsonContent = serializer.Serialize(newGame);
-            await File.WriteAllTextAsync(currentGamePath, jsonContent);
 
             // Create discord message for the game and post in channel "game-channel" TODO: Keep track of the message
 
@@ -66,23 +38,25 @@ public class NewGame
                     .WithColor(DiscordColor.Green)
                     .WithDescription($"Game on {date} at {time}!") // TODO: Local time
                     .WithFooter("This action was done by KARL (Kaotic Artificial Rider LLM)");
-                    // For each Faction, create the fields with the nations and players.
-                    foreach (var faction in newGame)
+                // For each Faction, create the fields with the nations and players.
+                foreach (var faction in newGame.factions)
+                {
+                    var fieldContent = string.Join("\n", faction.nations.Select(n =>
                     {
-                       var fieldContent = string.Join("\n", faction.nations.Select(n =>
+                        var nationStr = $"    {n.name}:";
+                        if (n.players != null && n.players.Any())
                         {
-                            var nationStr = $"    {n.name}:";
-                            if (n.players.Any())
-                            {
-                                var playersStr = string.Join("\n", n.players.Select(p => $"            - {p}"));
-                                return $"{nationStr}\n{playersStr}";
-                            }
-                            return $"{nationStr}\n            -";
-                        }));
+                            var playersStr = string.Join("\n", n.players.Select(p => $"            - {p.name}"));
+                            return $"{nationStr}\n{playersStr}";
+                        }
+                        return $"{nationStr}\n            -";
+                    }));
 
-                        gameInfo.AddField(faction.faction, string.IsNullOrEmpty(fieldContent) ? "No nations" : fieldContent);
-                    }
-                    DiscordMessage gameMessage = await discordChannel.SendMessageAsync(gameInfo.Build());
+                    gameInfo.AddField(faction.name, string.IsNullOrEmpty(fieldContent) ? "No nations" : fieldContent);
+                }
+                DiscordMessage gameMessage = await discordChannel.SendMessageAsync(gameInfo.Build());
+                newGame.messageID = gameMessage.Id.ToString();
+                GameHandler.SaveCurrentGame();
             }
 
             await context.RespondAsync($"New game created successfully for {date} at {time}!");

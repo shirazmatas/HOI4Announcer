@@ -13,5 +13,6 @@ public class UnlockGame
     public async Task OnExecute(CommandContext context)
     {
         GameHandler.UnlockGame();
+        // Edit existing discord message.
     }
 }

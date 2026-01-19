@@ -93,6 +93,7 @@ internal class HOI4Announcer
         }
 
         FactionsHandler.Load();
+        GameHandler.LoadCurrentGame();
     }
     private static async Task<bool> Connect()
     {

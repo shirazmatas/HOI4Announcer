@@ -21,7 +21,7 @@ public class AddUser
             if (GameHandler.HasActiveGame())
             {
                 // Add User to currentGame.json
-                GameHandler.AddUser(user.Id, nation.ToString());
+                //GameHandler.AddUser(user.Id, nation.ToString());
             }
         }
         catch (Exception)

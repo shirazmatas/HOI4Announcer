@@ -2,74 +2,74 @@
   "factions":
   [
     {
-      "name": "Allies",
+      "id": "Allies",
       "nations":
       [
         {
-          "name": "USA"
+          "id": "United_States"
         },
         {
-          "name": "UK"
+          "id": "United_Kingdom"
         },
         {
-          "name": "British Raj"
+          "id": "British_Raj"
         },
         {
-          "name": "Canada"
+          "id": "Dominion_of_Canada"
         },
         {
-          "name": "South Africa"
+          "id": "South_Africa"
         },
         {
-          "name": "Australia"
+          "id": "Australia"
         }
       ]
     },
     {
-      "name": "Comintern",
+      "id": "Comintern",
       "nations":
       [
         {
-          "name": "USSR"
+          "id": "Soviet_Union"
         },
         {
-          "name": "Mongolia"
+          "id": "Mongolia"
         }
       ]
     },
     {
-      "name": "Axis",
+      "id": "Axis",
       "nations":
       [
         {
-          "name": "Germany"
+          "id": "German_Reich"
         },
         {
-          "name": "Italy"
+          "id": "Italy"
         },
         {
-          "name": "Romania"
+          "id": "Romania"
         },
         {
-          "name": "Hungary"
+          "id": "Hungary"
         },
         {
-          "name": "Bulgaria"
+          "id": "Bulgaria"
         },
         {
-          "name": "Finland"
+          "id": "Finland"
         }
       ]
     },
     {
-      "name": "Co-Prosperity",
+      "id": "GEACS",
       "nations":
       [
         {
-          "name": "Japan"
+          "id": "Japan"
         },
         {
-          "name": "Manchukuo"
+          "id": "Manchukuo"
         }
       ]
     }

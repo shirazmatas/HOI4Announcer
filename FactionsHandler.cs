@@ -1,24 +1,34 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace HOI4Announcer;
 
-public static class FactionsHandler
-{
     public class FactionsConfig
     {
         public class Faction
         {
-            public string name { get; set; }
+            [JsonConverter(typeof(StringEnumConverter))]
+            [JsonProperty("id")]
+            public FactionID id { get; set; }
+
+            [JsonProperty("nations")]
             public List<Nation> nations { get; set; }
         }
 
         public class Nation
         {
-            public string name { get; set; }
+            [JsonConverter(typeof(StringEnumConverter))]
+            [JsonProperty("id")]
+            public NationID id { get; set; }
         }
 
+        [JsonProperty("factions")]
         public List<Faction> factions { get; set; }
     }
+
+public static class FactionsHandler
+{
+
 
     public static FactionsConfig config { get; private set; } = null;
 
@@ -33,24 +43,31 @@ public static class FactionsHandler
         File.WriteAllText($"{Directory.GetCurrentDirectory()}/factions.json", JsonConvert.SerializeObject(config));
     }
 
-    public static void AddFaction(string name)
+    public static FactionsConfig.Faction GetFaction(FactionID faction)
+    {
+        return config.factions.FirstOrDefault(f => f.id == faction);
+    }
+
+    public static void AddFaction(FactionID id)
     {
         // Make sure only one faction with the same name can exist
+        Save();
     }
 
-    public static void RemoveFaction(string name)
+    public static void RemoveFaction(FactionID id)
     {
-
+        Save();
     }
 
-    public static void AddNation(string faction, string nation)
+    public static void AddNation(FactionID faction, NationID nation)
     {
         // Make sure a nation can only be in one faction
+        Save();
     }
 
-    public static void RemoveNation(string faction)
+    public static void RemoveNation(NationID nation)
     {
-
+        Save();
     }
 }
 
