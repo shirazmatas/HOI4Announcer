@@ -74,7 +74,7 @@ public static class GameHandler
 
      public static void SaveGame(Game game, string fileName)
      {
-          File.WriteAllText($"{Directory.GetCurrentDirectory()}/games/{fileName}", JsonConvert.SerializeObject(game));
+          File.WriteAllText($"{Directory.GetCurrentDirectory()}/games/{fileName}", JsonConvert.SerializeObject(game, Formatting.Indented));
      }
 
      public static Game NewGame(DateTime startTime, string date, string time)
@@ -101,19 +101,15 @@ public static class GameHandler
                File.Move(currentGamePath, archivedGamePath);
           }
 
-          // Create a new game based on nations.yml
-          if (!File.Exists("nations.yml"))
+          // Create a new game based on factions.json
+          if (!File.Exists("factions.json"))
           {
-               Logger.Error("nations.yml not found!");
+               Logger.Error("factions.json not found!");
                return null;
           }
 
-          using var stream = File.OpenRead("nations.yml");
-          var deserializer = new YamlDotNet.Serialization.DeserializerBuilder()
-               .WithNamingConvention(YamlDotNet.Serialization.NamingConventions.HyphenatedNamingConvention.Instance)
-               .Build();
-          var nationsData = deserializer.Deserialize<Dictionary<string, List<string>>>(new StreamReader(stream));
-
+          using var stream = File.OpenRead("factions.json");
+/*
           currentGame = new Game
           {
                startTime = startTime,
@@ -131,7 +127,7 @@ public static class GameHandler
                locked = false,
                messageID = ""
           };
-
+*/
           SaveCurrentGame();
           return currentGame;
      }

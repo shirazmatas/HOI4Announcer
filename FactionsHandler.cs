@@ -12,7 +12,7 @@ namespace HOI4Announcer;
             public FactionID id { get; set; }
 
             [JsonProperty("nations")]
-            public List<Nation> nations { get; set; }
+            public List<Nation> nations { get; set; } = new List<Nation>();
         }
 
         public class Nation
@@ -23,7 +23,7 @@ namespace HOI4Announcer;
         }
 
         [JsonProperty("factions")]
-        public List<Faction> factions { get; set; }
+        public List<Faction> factions { get; set; } = new List<Faction>();
     }
 
 public static class FactionsHandler
@@ -40,7 +40,7 @@ public static class FactionsHandler
 
     public static void Save()
     {
-        File.WriteAllText($"{Directory.GetCurrentDirectory()}/factions.json", JsonConvert.SerializeObject(config));
+        File.WriteAllText($"{Directory.GetCurrentDirectory()}/factions.json", JsonConvert.SerializeObject(config, Formatting.Indented));
     }
 
     public static FactionsConfig.Faction GetFaction(FactionID faction)
@@ -50,23 +50,37 @@ public static class FactionsHandler
 
     public static void AddFaction(FactionID id)
     {
-        // Make sure only one faction with the same name can exist
+        if (config.factions.Any(f => f.id == id)) return;
+        config.factions.Add(new FactionsConfig.Faction { id = id });
         Save();
     }
 
     public static void RemoveFaction(FactionID id)
     {
+        config.factions.RemoveAll(f => f.id == id);
         Save();
     }
 
-    public static void AddNation(FactionID faction, NationID nation)
+    public static void AddNation(FactionID factionID, NationID nation)
     {
-        // Make sure a nation can only be in one faction
+        // TODO: error when nation is already in a faction maybe?
+        RemoveNation(nation);
+        FactionsConfig.Faction faction = GetFaction(factionID);
+        if (faction == null)
+        {
+            AddFaction(factionID);
+            faction = GetFaction(factionID);
+        }
+        faction.nations.Add(new FactionsConfig.Nation { id = nation });
         Save();
     }
 
     public static void RemoveNation(NationID nation)
     {
+        foreach (FactionsConfig.Faction faction in config.factions)
+        {
+            faction.nations.RemoveAll(n => n.id == nation);
+        }
         Save();
     }
 }
