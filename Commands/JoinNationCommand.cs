@@ -6,7 +6,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace HOI4Announcer.Commands;
 
-public class JoinNation
+public class JoinNationCommand
 {
     [Command("joinnation")]
     [Description("Add yourself to a nation in the current game")]

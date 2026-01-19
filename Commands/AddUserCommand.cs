@@ -7,7 +7,7 @@ using YamlDotNet.Serialization.NamingConventions;
 namespace HOI4Announcer.Commands;
 
 // Add user should allow a discord moderator :nerd_emoji: to assign a player to a nation.
-public class AddUser
+public class AddUserCommand
 {
     [Command("adduser")]
     [Description("Add a user to the game roster")]

@@ -4,7 +4,7 @@ using DSharpPlus.Entities;
 
 namespace HOI4Announcer.Commands;
 
-public class RemoveUser
+public class RemoveUserCommand
 {
     [Command("removeuser")]
     [Description("Remove a user from the nation roster")]

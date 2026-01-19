@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace HOI4Announcer.Commands;
 
-public class RemoveNation
+public class RemoveNationCommand
 {
     [Command("removenation")]
     [Description("Remove a nation from the roster of playable nations")]

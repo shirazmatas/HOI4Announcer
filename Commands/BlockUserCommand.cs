@@ -1,6 +1,6 @@
 ﻿namespace HOI4Announcer.Commands;
 // Maybe unnecessary
-public class BlockUser
+public class BlockUserCommand
 {
     
 }

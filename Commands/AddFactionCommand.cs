@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace HOI4Announcer.Commands;
 
-public class AddFaction
+public class AddFactionCommand
 {
     [Command("addfaction")]
     [Description("Add a faction to the list of factions")]

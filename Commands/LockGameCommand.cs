@@ -2,7 +2,7 @@
 using DSharpPlus.Commands;
 
 namespace HOI4Announcer.Commands;
-public class LockGame
+public class LockGameCommand
 {
     [Command("lockgame")]
     [Description("Lock the game so that only moderators can make changes to the roster")]

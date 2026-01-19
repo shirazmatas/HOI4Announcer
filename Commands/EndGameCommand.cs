@@ -3,7 +3,7 @@ using DSharpPlus.Commands;
 
 namespace HOI4Announcer.Commands;
 
-public class EndGame
+public class EndGameCommand
 {
     [Command("endgame")]
     [Description("End a game and declare a winning side")]

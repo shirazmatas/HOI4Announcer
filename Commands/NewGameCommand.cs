@@ -3,7 +3,7 @@ using System.ComponentModel;
 using DSharpPlus.Entities;
 namespace HOI4Announcer.Commands;
 
-public class NewGame
+public class NewGameCommand
 {
     [Command("newgame")]
     [Description("Start a new game")]

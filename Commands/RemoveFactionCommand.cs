@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace HOI4Announcer.Commands;
 
-public class RemoveFaction
+public class RemoveFactionCommand
 {
     [Command("removefaction")]
     [Description("Remove a faction and all its nations from the roster")]

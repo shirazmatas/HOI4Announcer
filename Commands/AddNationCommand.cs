@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace HOI4Announcer.Commands;
 
-public class AddNation
+public class AddNationCommand
 {
     [Command("addnation")]
     [Description("Add a nation to the roster of playable nations")]
