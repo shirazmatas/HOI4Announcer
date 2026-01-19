@@ -25,14 +25,15 @@ public static class GameHandler
 
      public class Game
      {
-          internal DateTime startTime;
-          internal string serverID;
-          internal string serverPassword;
-          internal List<Faction> factions;
-          internal bool locked;
+          public DateTime startTime;
+          public string serverID;
+          public string serverPassword;
+          public List<Faction> factions;
+          public bool locked;
+          public string messageID;
      }
 
-     private static Game currentGame = null;
+     public static Game currentGame = null;
 
      public static bool HasActiveGame()
      {
@@ -76,19 +77,66 @@ public static class GameHandler
           File.WriteAllText($"{Directory.GetCurrentDirectory()}/games/{fileName}", JsonConvert.SerializeObject(game));
      }
 
-     public static void NewGame()
+     public static Game NewGame(DateTime startTime, string date, string time)
      {
-          if (!HasActiveGame())
+          string gamesPath = Path.Combine(Directory.GetCurrentDirectory(), "games");
+          string currentGamePath = Path.Combine(gamesPath, "currentGame.json");
+
+          // Ensure games directory exists
+          if (!Directory.Exists(gamesPath))
           {
-               // create new game from template in the factions config
+               Directory.CreateDirectory(gamesPath);
           }
-          else
+
+          // Check if there is a current game
+          if (File.Exists(currentGamePath))
           {
-               // tell user old game is still active.
+               // Rename currentGame.json to date-time.json (of that game)
+               string archivedGamePath = Path.Combine(gamesPath, $"{date}-{time.Replace(":", "-")}.json");
+               if (File.Exists(archivedGamePath))
+               {
+                    // If it already exists, maybe add a timestamp or just overwrite. For now, let's just move/overwrite if needed.
+                    File.Delete(archivedGamePath);
+               }
+               File.Move(currentGamePath, archivedGamePath);
           }
+
+          // Create a new game based on nations.yml
+          if (!File.Exists("nations.yml"))
+          {
+               Logger.Error("nations.yml not found!");
+               return null;
+          }
+
+          using var stream = File.OpenRead("nations.yml");
+          var deserializer = new YamlDotNet.Serialization.DeserializerBuilder()
+               .WithNamingConvention(YamlDotNet.Serialization.NamingConventions.HyphenatedNamingConvention.Instance)
+               .Build();
+          var nationsData = deserializer.Deserialize<Dictionary<string, List<string>>>(new StreamReader(stream));
+
+          currentGame = new Game
+          {
+               startTime = startTime,
+               serverID = "",
+               serverPassword = "",
+               factions = nationsData.Select(f => new Faction
+               {
+                    name = f.Key,
+                    nations = f.Value.Select(n => new Nation
+                    {
+                         name = n,
+                         players = new List<Player>()
+                    }).ToList()
+               }).ToList(),
+               locked = false,
+               messageID = ""
+          };
+
+          SaveCurrentGame();
+          return currentGame;
      }
 
-     public void AddUser(ulong discordID, string nation)
+     /*public void AddUser(ulong discordID, string nation)
      {
           // Search for the nation in all factions
           if (!NationExists(nation, currentGame))
@@ -138,5 +186,10 @@ public static class GameHandler
 
                // TODO: Change discord message to remove locked emoji
           }
+     }
+
+     public static void AddPlayerToNation(NationID nation, string playerName, ulong playerId)
+     {
+          throw new NotImplementedException();
      }
 }
