@@ -28,8 +28,6 @@ namespace HOI4Announcer;
 
 public static class FactionsHandler
 {
-
-
     public static FactionsConfig config { get; private set; } = null;
 
     public static void Load()
