@@ -9,7 +9,6 @@ namespace HOI4Announcer
 		public class Bot
 		{
 			public string token = "";
-			public string logLevel  = "Error";
 
 			public ulong logChannel = 0;
 			public ulong gameChannel = 0;
@@ -59,7 +58,7 @@ namespace HOI4Announcer
 			Logger.Debug(member.Username + " is not staff.");
 			return false;
 		}
-		
+
 		public static bool IsUser(DiscordMember member)
 		{
 			foreach (DiscordRole role in member.Roles)

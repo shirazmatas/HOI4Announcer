@@ -1,15 +1,19 @@
 
 using System.Reflection;
 using System.Text.Json;
+using DSharpPlus;
 
 
 namespace HOI4Announcer;
 
-
-
 public static class Utilities
 {
     public static readonly JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
+
+    public static string DiscordRelativeTime(DateTimeOffset time)
+    {
+        return Formatter.Timestamp(time, TimestampFormat.ShortDateTime); // TOOD: Configurable timestamp format?
+    }
 
     public static string ReadManifestData(string embeddedFileName)
     {

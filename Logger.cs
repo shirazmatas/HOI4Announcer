@@ -21,8 +21,7 @@ public class Logger(string logCategory) : ILogger
     private static LogLevel minimumLogLevel = LogLevel.Trace;
     private static readonly Lock consoleLock = new();
     private bool IsSingleton => logCategory == HOI4Announcer.ApplicationName;
-    
-    private static TextWriter logFileWriter = null;
+
     private static readonly EventId botEventId = new EventId(420, "BOT");
 
     internal static void SetLogLevel(LogLevel level)
@@ -101,7 +100,7 @@ public class Logger(string logCategory) : ILogger
         }
         ConsoleLog(logLevel, exception, message);
     }
-    
+
 
     private void ConsoleLog(LogLevel logLevel, Exception exception, string message)
     {
@@ -174,7 +173,7 @@ public class Logger(string logCategory) : ILogger
         Console.ResetColor();
     }
 
-  
+
 
     private static string GetExceptionString(Exception exception, int indentation = 0)
     {

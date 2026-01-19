@@ -1,10 +1,7 @@
-﻿// Main file
-using System.Reflection;
+﻿using System.Reflection;
 using DSharpPlus;
-using DSharpPlus.EventArgs;
 using DSharpPlus.Commands;
 using DSharpPlus.Commands.Processors.SlashCommands;
-using DSharpPlus.Entities;
 using HOI4Announcer.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -85,13 +82,6 @@ internal class HOI4Announcer
 
         Logger.Log("Setting up Discord client...");
 
-        // Checking log level
-        if (!Enum.TryParse(ConfigParser.config.bot.logLevel, true, out LogLevel logLevel))
-        {
-            Logger.Warn("Log level '" + ConfigParser.config.bot.logLevel + "' invalid, using 'Information' instead.");
-            logLevel = LogLevel.Information;
-        }
-
         FactionsHandler.Load();
         GameHandler.LoadCurrentGame();
     }
@@ -117,8 +107,20 @@ internal class HOI4Announcer
         {
             extension.AddCommands(
             [
-                typeof(AddNation),
-                typeof(NewGame)
+                typeof(AddFactionCommand),
+                typeof(AddNationCommand),
+                //typeof(AddUserCommand),
+                //typeof(BlockUserCommand),
+                //typeof(EndGameCommand),
+                //typeof(JoinNationCommand),
+                //typeof(LeaveNationCommand),
+                //typeof(LockGameCommand),
+                typeof(NewGameCommand),
+                typeof(RemoveFactionCommand),
+                typeof(RemoveNationCommand),
+                //typeof(RemoveUserCommand),
+                //typeof(UnblockUserCommand),
+                //typeof(UnlockGameCommand)
             ]);
             extension.AddProcessor(new SlashCommandProcessor());
             extension.CommandErrored += EventHandler.OnCommandError;

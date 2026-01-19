@@ -7,13 +7,13 @@ public static class GameHandler
 {
      public class Faction
      {
-          public string name;
+          public FactionID id;
           public List<Nation> nations;
      }
 
      public class Nation
      {
-          public string name;
+          public NationID id;
           public List<Player> players;
      }
 
@@ -21,19 +21,22 @@ public static class GameHandler
      {
           public string name;
           public ulong discordID;
+          public string Tag => $"<@{discordID}>";
      }
 
      public class Game
      {
-          public DateTime startTime;
+          public DateTimeOffset startTime;
           public string serverID;
           public string serverPassword;
           public List<Faction> factions;
           public bool locked;
-          public string messageID;
+          public ulong messageID;
      }
 
      public static Game currentGame = null;
+     private static readonly string gameDir = Directory.GetCurrentDirectory() + "/games";
+     private static readonly string currentGameFile = "currentGame.json";
 
      public static bool HasActiveGame()
      {
@@ -42,23 +45,23 @@ public static class GameHandler
 
      public static void LoadCurrentGame()
      {
-         currentGame = LoadGame("currentGame.json");
+          currentGame = LoadGame(currentGameFile);
      }
 
      public static Game LoadGame(string fileName)
      {
-          if (!File.Exists($"{Directory.GetCurrentDirectory()}/games/{fileName}"))
+          if (!File.Exists($"{gameDir}/{fileName}"))
           {
                return null;
           }
 
           try
           {
-               return JsonConvert.DeserializeObject<Game>(File.ReadAllText($"{Directory.GetCurrentDirectory()}/games/{fileName}"));
+               return JsonConvert.DeserializeObject<Game>(File.ReadAllText($"{gameDir}/{fileName}"));
           }
           catch (Exception e)
           {
-               Logger.Error($"Unable to load game file \"{Directory.GetCurrentDirectory()}/games/{fileName}\"", e);
+               Logger.Error($"Unable to load game file \"{gameDir}/{fileName}\"", e);
           }
 
           return null;
@@ -68,31 +71,34 @@ public static class GameHandler
      {
           if (currentGame != null)
           {
-               SaveGame(currentGame, "currentGame.json");
+               SaveGame(currentGame, currentGameFile);
           }
      }
 
      public static void SaveGame(Game game, string fileName)
      {
+          if (!Directory.Exists(gameDir))
+          {
+               Directory.CreateDirectory(gameDir);
+          }
           File.WriteAllText($"{Directory.GetCurrentDirectory()}/games/{fileName}", JsonConvert.SerializeObject(game, Formatting.Indented));
      }
 
-     public static Game NewGame(DateTime startTime, string date, string time)
+     public static Game NewGame(DateTimeOffset startTime)
      {
-          string gamesPath = Path.Combine(Directory.GetCurrentDirectory(), "games");
-          string currentGamePath = Path.Combine(gamesPath, "currentGame.json");
+          string currentGamePath = $"{gameDir}/{currentGameFile}";
 
           // Ensure games directory exists
-          if (!Directory.Exists(gamesPath))
+          if (!Directory.Exists(gameDir))
           {
-               Directory.CreateDirectory(gamesPath);
+               Directory.CreateDirectory(gameDir);
           }
 
           // Check if there is a current game
           if (File.Exists(currentGamePath))
           {
                // Rename currentGame.json to date-time.json (of that game)
-               string archivedGamePath = Path.Combine(gamesPath, $"{date}-{time.Replace(":", "-")}.json");
+               string archivedGamePath = $"{gameDir}/{startTime.ToString("yyyy-MM-dd_HH:ss")}.json";
                if (File.Exists(archivedGamePath))
                {
                     // If it already exists, maybe add a timestamp or just overwrite. For now, let's just move/overwrite if needed.
@@ -101,15 +107,9 @@ public static class GameHandler
                File.Move(currentGamePath, archivedGamePath);
           }
 
-          // Create a new game based on factions.json
-          if (!File.Exists("factions.json"))
-          {
-               Logger.Error("factions.json not found!");
-               return null;
-          }
 
-          using var stream = File.OpenRead("factions.json");
-/*
+
+          /*
           currentGame = new Game
           {
                startTime = startTime,
@@ -152,36 +152,33 @@ public static class GameHandler
           SaveCurrentGame();
      }*/
 
-     public static void LockGame() // TODO: Review Code
+     public static void SetLocked(bool locked)
      {
-          if (HasActiveGame())
-          {
-               // Write in game.lock
-               currentGame.locked = true;
-               SaveCurrentGame();
-               // Change the discord message to display a locked emoji
-               // TODO: Change discord message
-          }
+          if (!HasActiveGame()) return;
+
+          currentGame.locked = locked;
+          SaveCurrentGame();
+
+          // Change the discord message to display a locked emoji
+          // TODO: Change discord message
      }
 
-     public static void UnlockGame() // TODO: Review Code
+     public static void SetServerID(string serverID)
      {
-          if (HasActiveGame())
-          {
-               string lockFilePath = $"{Directory.GetCurrentDirectory()}/games/game.lock";
+          currentGame.serverID = serverID;
+          SaveCurrentGame();
+     }
 
-               // Check if lock file exists
-               if (File.Exists(lockFilePath))
-               {
-                    // Delete the lock file
-                    File.Delete(lockFilePath);
-               }
+     public static void SetServerPassword(string serverPassword)
+     {
+          currentGame.serverPassword = serverPassword;
+          SaveCurrentGame();
+     }
 
-               currentGame.locked = false;
-               SaveCurrentGame();
-
-               // TODO: Change discord message to remove locked emoji
-          }
+     public static void SetMessageID(ulong messageID)
+     {
+          currentGame.messageID = messageID;
+          SaveCurrentGame();
      }
 
      public static void AddPlayerToNation(NationID nation, string playerName, ulong playerId)
