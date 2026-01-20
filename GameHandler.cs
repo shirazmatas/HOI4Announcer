@@ -341,13 +341,19 @@ public static class GameHandler
           return false;
      }
 
-     public static async Task<bool> EndGame()
+     public static async Task<bool> EndGame(string winner = null)
      {
           if (!HasActiveGame()) return false;
 
           string currentGamePath = $"{gameDir}/{currentGameFile}";
           if (File.Exists(currentGamePath))
           {
+               if (!string.IsNullOrEmpty(winner))
+               {
+                    currentGame.winner = winner;
+                    SaveCurrentGame();
+               }
+               
                string archivedGamePath = $"{gameDir}/{currentGame.startTime.ToString("yyyy-MM-dd_HH-mm")}_ended.json";
                if (File.Exists(archivedGamePath))
                {

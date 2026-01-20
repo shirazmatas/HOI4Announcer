@@ -22,7 +22,7 @@ public class EndGameCommand
             return;
         }
 
-        bool success = await GameHandler.EndGame();
+        bool success = await GameHandler.EndGame(winner);
         if (success)
         {
             await context.RespondAsync(new DiscordEmbedBuilder
