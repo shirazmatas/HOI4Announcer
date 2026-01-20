@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using DSharpPlus;
 using DSharpPlus.Commands;
 using DSharpPlus.Commands.Processors.SlashCommands;
@@ -12,7 +12,7 @@ namespace HOI4Announcer;
 internal class HOI4Announcer
 {
     internal const string ApplicationName = "HOI4Announcer";
-    private static DiscordClient _client = null;
+    public static DiscordClient Client { get; private set; }
     private static async Task<int> Main(string[] args)
     {
         Logger.Log("Starting " + Assembly.GetEntryAssembly()?.GetName().Name + " version " + GetVersion() + "...");
@@ -63,10 +63,10 @@ internal class HOI4Announcer
     /// <exception cref="ArgumentException">Thrown if the bot token in the config is unset.</exception>
     public static async void Reload()
     {
-        if (_client != null)
+        if (Client != null)
         {
-            await _client.DisconnectAsync();
-            _client.Dispose();
+            await Client.DisconnectAsync();
+            Client.Dispose();
             Logger.Log("Discord client disconnected.");
         }
 
@@ -141,14 +141,14 @@ internal class HOI4Announcer
             config.AddProvider(new LoggerProvider());
         });
 
-        _client = clientBuilder.Build();
+        Client = clientBuilder.Build();
 
         Logger.Log("Connecting to Discord.");
         EventHandler.hasLoggedGuilds = false;
 
         try
         {
-            await _client.ConnectAsync();
+            await Client.ConnectAsync();
         }
         catch (Exception e)
         {

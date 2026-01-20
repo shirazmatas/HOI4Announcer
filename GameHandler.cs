@@ -106,10 +106,6 @@ public static class GameHandler
                }
                File.Move(currentGamePath, archivedGamePath);
           }
-
-
-
-          /*
           currentGame = new Game
           {
                startTime = startTime,
@@ -127,7 +123,6 @@ public static class GameHandler
                locked = false,
                messageID = ""
           };
-*/
           SaveCurrentGame();
           return currentGame;
      }
@@ -152,6 +147,24 @@ public static class GameHandler
           SaveCurrentGame();
      }*/
 
+     public static void AddNation(NationID nationID, FactionID factionID)
+     {
+          if (!HasActiveGame()) return;
+
+          Faction faction = currentGame.factions.FirstOrDefault(f => f.id == factionID);
+          if (faction == null)
+          {
+               faction = new Faction { id = factionID, nations = new List<Nation>() };
+               currentGame.factions.Add(faction);
+          }
+
+          if (faction.nations.Any(n => n.id == nationID)) return;
+
+          faction.nations.Add(new Nation { id = nationID, players = new List<Player>() });
+          SaveCurrentGame();
+          UpdateDiscordMessage();
+     }
+
      public static void SetLocked(bool locked)
      {
           if (!HasActiveGame()) return;
@@ -159,8 +172,7 @@ public static class GameHandler
           currentGame.locked = locked;
           SaveCurrentGame();
 
-          // Change the discord message to display a locked emoji
-          // TODO: Change discord message
+          UpdateDiscordMessage();
      }
 
      public static void SetServerID(string serverID)
@@ -185,4 +197,15 @@ public static class GameHandler
      {
           throw new NotImplementedException();
      }
+
+     public static void UpdateDiscordMessage()
+     {
+          if (!HasActiveGame() || currentGame.messageID == 0)
+          {
+               return;
+          }
+
+          DiscordHandler.UpdateGameMessage(currentGame.messageID, currentGame);
+     }
+
 }

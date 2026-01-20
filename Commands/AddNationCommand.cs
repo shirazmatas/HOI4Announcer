@@ -31,7 +31,7 @@ public class AddNationCommand
         if (GameHandler.HasActiveGame())
         {
             // Add also to currentGame.json
-            //GameHandler.AddNation(nation, faction);
+            GameHandler.AddNation(nationID, factionID);
         }
 
         await context.RespondAsync($"Nation {nationID.ToFriendlyString()} has been added to the {factionID.ToFriendlyString()} faction.");
