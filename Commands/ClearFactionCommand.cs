@@ -1,4 +1,6 @@
 using DSharpPlus.Commands;
+using DSharpPlus.Commands.Processors.SlashCommands;
+using DSharpPlus.Entities;
 using System.ComponentModel;
 
 namespace HOI4Announcer.Commands;
@@ -7,12 +9,16 @@ public class ClearFactionCommand
 {
     [Command("clearfaction")]
     [Description("Clear all nations from a faction in the current game")]
-    public async Task OnExecute(CommandContext context,
+    public async Task OnExecute(SlashCommandContext context,
         [Parameter("faction")][Description("The faction to remove")] FactionID factionID)
     {
         if (FactionsHandler.GetFaction(factionID) == null)
         {
-            await context.RespondAsync($"Error: Faction {factionID.ToFriendlyString()} does not exist.");
+            await context.RespondAsync(new DiscordEmbedBuilder
+            {
+                Color = DiscordColor.Red,
+                Description = $"Error: Faction {factionID.ToFriendlyString()} does not exist."
+            }, true);
             return;
         }
 
@@ -25,11 +31,19 @@ public class ClearFactionCommand
 
         if (success)
         {
-            await context.RespondAsync($"Faction {factionID.ToFriendlyString()} and its nations have been removed from the current game.");
+            await context.RespondAsync(new DiscordEmbedBuilder
+            {
+                Color = DiscordColor.Green,
+                Description = $"Faction {factionID.ToFriendlyString()} and its nations have been removed from the current game."
+            });
         }
         else
         {
-            await context.RespondAsync($"Failed to clear faction {factionID.ToFriendlyString()}. Does it exist in the current game?");
+            await context.RespondAsync(new DiscordEmbedBuilder
+            {
+                Color = DiscordColor.Red,
+                Description = $"Error: Failed to clear faction {factionID.ToFriendlyString()}. Does it exist in the current game?"
+            }, true);
         }
     }
 }

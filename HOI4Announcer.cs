@@ -122,7 +122,9 @@ internal class HOI4Announcer
                 typeof(UnlockGameCommand),
                 typeof(AddDefaultNationCommand),
                 typeof(RemoveDefaultNationCommand),
-                typeof(ClearDefaultFactionCommand)
+                typeof(ClearDefaultFactionCommand),
+                typeof(SetDefaultMaxPlayersCommand),
+                typeof(SetMaxPlayersCommand)
             ]);
             extension.AddProcessor(new SlashCommandProcessor());
             extension.CommandErrored += EventHandler.OnCommandError;

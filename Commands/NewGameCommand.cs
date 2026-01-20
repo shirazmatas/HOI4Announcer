@@ -1,5 +1,6 @@
 ﻿using DSharpPlus.Commands;
 using System.ComponentModel;
+using DSharpPlus.Commands.Processors.SlashCommands;
 using DSharpPlus.Entities;
 namespace HOI4Announcer.Commands;
 
@@ -7,7 +8,7 @@ public class NewGameCommand
 {
     [Command("newgame")]
     [Description("Start a new game")]
-    public async Task OnExecute(CommandContext context,
+    public async Task OnExecute(SlashCommandContext context,
         [Parameter("starttime")] [Description("YYYY-MM-DD HH:MM")] DateTimeOffset startTime)
     {
         try
@@ -15,18 +16,30 @@ public class NewGameCommand
             GameHandler.Game newGame = GameHandler.NewGame(startTime);
             if (newGame == null)
             {
-                await context.RespondAsync("Failed to create new game. Check logs for details.");
+                await context.RespondAsync(new DiscordEmbedBuilder
+                {
+                    Color = DiscordColor.Red,
+                    Description = "Error: Failed to create new game. Check logs for details."
+                }, true);
                 return;
             }
 
             // Create the Discord message
             await DiscordHandler.CreateGameMessage(newGame);
 
-            await context.RespondAsync($"New game created successfully for {Utilities.DiscordRelativeTime(startTime)}!");
+            await context.RespondAsync(new DiscordEmbedBuilder
+            {
+                Color = DiscordColor.Green,
+                Description = $"New game created successfully for {Utilities.DiscordRelativeTime(startTime)}!"
+            });
         }
         catch (Exception ex)
         {
-            await context.RespondAsync($"Error creating new game: {ex.Message}");
+            await context.RespondAsync(new DiscordEmbedBuilder
+            {
+                Color = DiscordColor.Red,
+                Description = $"Error creating new game: {ex.Message}"
+            }, true);
         }
     }
 }

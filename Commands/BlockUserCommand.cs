@@ -1,4 +1,5 @@
 ﻿using DSharpPlus.Commands;
+using DSharpPlus.Commands.Processors.SlashCommands;
 using DSharpPlus.Entities;
 using System.ComponentModel;
 
@@ -8,7 +9,7 @@ public class BlockUserCommand
 {
     [Command("blockuser")]
     [Description("Block a user from participating in games")]
-    public async Task OnExecute(CommandContext context,
+    public async Task OnExecute(SlashCommandContext context,
         [Parameter("user")] [Description("The user to block")] DiscordMember user)
     {
         // Simple implementation: Add to a blocked list in Config
@@ -19,7 +20,11 @@ public class BlockUserCommand
 
         if (ConfigParser.config.bot.blockedUsers.Contains(user.Id))
         {
-            await context.RespondAsync($"{user.DisplayName} is already blocked.");
+            await context.RespondAsync(new DiscordEmbedBuilder
+            {
+                Color = DiscordColor.Red,
+                Description = $"Error: {user.DisplayName} is already blocked."
+            }, true);
             return;
         }
 
@@ -32,6 +37,10 @@ public class BlockUserCommand
             await GameHandler.RemovePlayer(user.Id);
         }
 
-        await context.RespondAsync($"{user.DisplayName} has been blocked.");
+        await context.RespondAsync(new DiscordEmbedBuilder
+        {
+            Color = DiscordColor.Green,
+            Description = $"{user.DisplayName} has been blocked."
+        });
     }
 }
