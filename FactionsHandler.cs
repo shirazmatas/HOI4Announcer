@@ -43,7 +43,7 @@ public static class FactionsHandler
 
     public static FactionsConfig.Faction GetFaction(FactionID faction)
     {
-        return config.factions.FirstOrDefault(f => f.id == faction);
+        return config.factions.FirstOrDefault(f => f.id == faction) ?? new FactionsConfig.Faction() { id = faction };
     }
 
     public static void AddFaction(FactionID id)
@@ -53,7 +53,7 @@ public static class FactionsHandler
         Save();
     }
 
-    public static void RemoveFaction(FactionID id)
+    public static void ClearFaction(FactionID id)
     {
         config.factions.RemoveAll(f => f.id == id);
         Save();

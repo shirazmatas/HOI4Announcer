@@ -6,7 +6,7 @@ namespace HOI4Announcer.Commands;
 public class AddNationCommand
 {
     [Command("addnation")]
-    [Description("Add a nation to the roster of playable nations")]
+    [Description("Add a nation to the roster of playable nations for the current game")]
     public async Task OnExecute(CommandContext context,
         [Parameter("nation")][Description("The nation to add")] NationID nationID,
         [Parameter("faction")][Description("The faction of the nation")] FactionID factionID,

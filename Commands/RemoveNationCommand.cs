@@ -6,7 +6,7 @@ namespace HOI4Announcer.Commands;
 public class RemoveNationCommand
 {
     [Command("removenation")]
-    [Description("Remove a nation from the roster of playable nations")]
+    [Description("Remove a nation from the roster of playable nations for the current game")]
     public async Task OnExecute(CommandContext context,
         [Parameter("nation")][Description("The nation to remove")] NationID nationID)
     {
