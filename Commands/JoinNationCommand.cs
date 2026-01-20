@@ -58,7 +58,7 @@ public class JoinNationCommand
                 await context.RespondAsync(new DiscordEmbedBuilder
                 {
                     Color = DiscordColor.Green,
-                    Description = $"{playerName} has joined {nation.ToFriendlyString()}."
+                    Description = $"<@{playerId}> has joined {nation.ToFriendlyString()}."
                 });
             }
             else
