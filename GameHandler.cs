@@ -60,6 +60,12 @@ public static class GameHandler
 
           [JsonProperty("message-id")]
           public ulong messageID;
+
+          [JsonProperty("notification-minutes")]
+          public int notificationMinutes = -1;
+
+          [JsonProperty("notified")]
+          public bool notified = false;
      }
 
      public static Game currentGame = null;

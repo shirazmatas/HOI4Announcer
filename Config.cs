@@ -12,8 +12,6 @@ namespace HOI4Announcer
 
 			public ulong logChannel = 0;
 			public ulong gameChannel = 0;
-			public List<ulong> staffRoles = new List<ulong>();
-			public List<ulong> userRoles = new List<ulong>();
 			public List<ulong> blockedUsers = new List<ulong>();
 		}
 		public Bot bot = new Bot();
@@ -52,33 +50,6 @@ namespace HOI4Announcer
 			ISerializer serializer = new SerializerBuilder().WithNamingConvention(HyphenatedNamingConvention.Instance).Build();
 			string yaml = serializer.Serialize(config);
 			File.WriteAllText(configPath, yaml);
-		}
-		public static bool IsStaff(DiscordMember member)
-		{
-			foreach (DiscordRole role in member.Roles)
-			{
-				Logger.Debug("checking if " + member.Username + " is a staff member");
-				if (config.bot.staffRoles.Contains(role.Id) || config.bot.staffRoles.Contains(0))
-				{
-					return true;
-				}
-			}
-			Logger.Debug(member.Username + " is not staff.");
-			return false;
-		}
-
-		public static bool IsUser(DiscordMember member)
-		{
-			foreach (DiscordRole role in member.Roles)
-			{
-				Logger.Debug("checking if " + member.Username + " is a user");
-				if (config.bot.userRoles.Contains(role.Id) || config.bot.userRoles.Contains(0))
-				{
-					return true;
-				}
-			}
-			Logger.Debug(member.Username + " is not a user.");
-			return false;
 		}
 	}
 }

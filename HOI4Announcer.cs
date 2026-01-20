@@ -20,6 +20,9 @@ internal class HOI4Announcer
         {
             Reload();
             await Connect();
+
+            _ = Task.Run(NotificationLoop);
+
             // Block this task until the program is closed.
             await Task.Delay(-1);
             return 0;
@@ -29,6 +32,32 @@ internal class HOI4Announcer
             Logger.Fatal("Fatal error:\n" + e);
             Console.ReadLine();
             return 1;
+        }
+    }
+
+    private static async Task NotificationLoop()
+    {
+        while (true)
+        {
+            try
+            {
+                if (GameHandler.HasActiveGame() && GameHandler.currentGame.notificationMinutes >= 0 && !GameHandler.currentGame.notified)
+                {
+                    TimeSpan timeUntilStart = GameHandler.currentGame.startTime - DateTimeOffset.Now;
+                    if (timeUntilStart.TotalMinutes <= GameHandler.currentGame.notificationMinutes)
+                    {
+                        Logger.Log($"Game is starting in {timeUntilStart.TotalMinutes:F1} minutes. Sending notifications...");
+                        GameHandler.currentGame.notified = true;
+                        GameHandler.SaveCurrentGame();
+                        await DiscordHandler.SendStartNotifications(GameHandler.currentGame);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error in NotificationLoop", ex);
+            }
+            await Task.Delay(TimeSpan.FromMinutes(1));
         }
     }
 
@@ -124,7 +153,8 @@ internal class HOI4Announcer
                 typeof(RemoveDefaultNationCommand),
                 typeof(ClearDefaultFactionCommand),
                 typeof(SetDefaultMaxPlayersCommand),
-                typeof(SetMaxPlayersCommand)
+                typeof(SetMaxPlayersCommand),
+                typeof(SetNotificationCommand)
             ]);
             extension.AddProcessor(new SlashCommandProcessor());
             extension.CommandErrored += EventHandler.OnCommandError;

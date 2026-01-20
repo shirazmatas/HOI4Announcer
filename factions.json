@@ -4,22 +4,28 @@
       "id": "Allies",
       "nations": [
         {
-          "id": "United_States"
+          "id": "United_States",
+          "max-players": 1
         },
         {
-          "id": "United_Kingdom"
+          "id": "United_Kingdom",
+          "max-players": 1
         },
         {
-          "id": "British_Raj"
+          "id": "British_Raj",
+          "max-players": 1
         },
         {
-          "id": "Dominion_of_Canada"
+          "id": "Dominion_of_Canada",
+          "max-players": 1
         },
         {
-          "id": "South_Africa"
+          "id": "South_Africa",
+          "max-players": 1
         },
         {
-          "id": "Australia"
+          "id": "Australia",
+          "max-players": 1
         }
       ]
     },
@@ -27,10 +33,12 @@
       "id": "Comintern",
       "nations": [
         {
-          "id": "Soviet_Union"
+          "id": "Soviet_Union",
+          "max-players": 1
         },
         {
-          "id": "Mongolia"
+          "id": "Mongolia",
+          "max-players": 1
         }
       ]
     },
@@ -38,28 +46,40 @@
       "id": "Axis",
       "nations": [
         {
-          "id": "German_Reich"
+          "id": "German_Reich",
+          "max-players": 1
         },
         {
-          "id": "Italy"
+          "id": "Italy",
+          "max-players": 1
         },
         {
-          "id": "Romania"
+          "id": "Romania",
+          "max-players": 1
         },
         {
-          "id": "Hungary"
+          "id": "Hungary",
+          "max-players": 1
         },
         {
-          "id": "Bulgaria"
+          "id": "Bulgaria",
+          "max-players": 1
         },
         {
-          "id": "Finland"
+          "id": "Finland",
+          "max-players": 1
         },
         {
-          "id": "Belgium"
+          "id": "Belgium",
+          "max-players": 1
         },
         {
-          "id": "Estonia"
+          "id": "Estonia",
+          "max-players": 1
+        },
+        {
+          "id": "Bolivian_Republic",
+          "max-players": 1
         }
       ]
     },
@@ -67,7 +87,8 @@
       "id": "Independent",
       "nations": [
         {
-          "id": "Bhutan"
+          "id": "Bhutan",
+          "max-players": 1
         }
       ]
     }
