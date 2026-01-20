@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace HOI4Announcer;
 
@@ -7,30 +8,49 @@ public static class GameHandler
 {
      public class Faction
      {
+          [JsonConverter(typeof(StringEnumConverter))]
+          [JsonProperty("id")]
           public FactionID id;
+          [JsonProperty("nations")]
           public List<Nation> nations;
      }
 
      public class Nation
      {
+          [JsonConverter(typeof(StringEnumConverter))]
+          [JsonProperty("id")]
           public NationID id;
+          [JsonProperty("players")]
           public List<Player> players;
      }
 
      public class Player
      {
+          [JsonProperty("name")]
           public string name;
+          [JsonProperty("discord-id")]
           public ulong discordID;
           public string Tag => $"<@{discordID}>";
      }
 
      public class Game
      {
+          [JsonProperty("players")]
           public DateTimeOffset startTime;
+
+          [JsonProperty("server-id")]
           public string serverID;
+
+          [JsonProperty("server-password")]
           public string serverPassword;
+
+          [JsonProperty("factions")]
           public List<Faction> factions;
+
+          [JsonProperty("locked")]
           public bool locked;
+
+          [JsonProperty("message-id")]
           public ulong messageID;
      }
 
@@ -111,17 +131,17 @@ public static class GameHandler
                startTime = startTime,
                serverID = "",
                serverPassword = "",
-               factions = nationsData.Select(f => new Faction
+               factions = FactionsHandler.config.factions.Select(f => new Faction
                {
-                    name = f.Key,
-                    nations = f.Value.Select(n => new Nation
+                    id = f.id,
+                    nations = f.nations.Select(n => new Nation
                     {
-                         name = n,
+                         id = n.id,
                          players = new List<Player>()
                     }).ToList()
                }).ToList(),
                locked = false,
-               messageID = ""
+               messageID = 0
           };
           SaveCurrentGame();
           return currentGame;
