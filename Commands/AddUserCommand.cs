@@ -37,7 +37,7 @@ public class AddUserCommand
                     {
                         Color = DiscordColor.Green,
                         Description = $"{user.Mention} has been assigned to {nation.ToFriendlyString()}."
-                    });
+                    }, true);
                 }
                 else
                 {

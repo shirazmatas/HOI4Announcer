@@ -31,7 +31,7 @@ public class NewGameCommand
             {
                 Color = DiscordColor.Green,
                 Description = $"New game created successfully for {Utilities.DiscordRelativeTime(startTime)}!"
-            });
+            }, true);
         }
         catch (Exception ex)
         {

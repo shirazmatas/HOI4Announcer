@@ -41,6 +41,6 @@ public class BlockUserCommand
         {
             Color = DiscordColor.Green,
             Description = $"{user.DisplayName} has been blocked."
-        });
+        }, true);
     }
 }

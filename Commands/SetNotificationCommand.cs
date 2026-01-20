@@ -42,6 +42,6 @@ public class SetNotificationCommand
         {
             Color = DiscordColor.Green,
             Description = desc
-        });
+        }, true);
     }
 }

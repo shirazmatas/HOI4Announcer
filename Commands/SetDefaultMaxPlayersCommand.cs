@@ -38,6 +38,6 @@ public class SetDefaultMaxPlayersCommand
         {
             Color = DiscordColor.Green,
             Description = $"Default max players for {nationID.ToFriendlyString()} has been set to {maxPlayers}."
-        });
+        }, true);
     }
 }

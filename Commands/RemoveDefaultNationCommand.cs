@@ -38,6 +38,6 @@ public class RemoveDefaultNationCommand
         {
             Color = DiscordColor.Green,
             Description = $"Nation {nationID.ToFriendlyString()} has been removed from the roster."
-        });
+        }, true);
     }
 }

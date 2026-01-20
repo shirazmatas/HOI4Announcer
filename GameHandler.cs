@@ -140,6 +140,7 @@ public static class GameHandler
                }
                File.Move(currentGamePath, archivedGamePath);
           }
+
           currentGame = new Game
           {
                startTime = startTime,

@@ -28,6 +28,6 @@ public class ClearDefaultFactionCommand
         {
             Color = DiscordColor.Green,
             Description = $"Faction {factionID.ToFriendlyString()} and its nations have been removed."
-        });
+        }, true);
     }
 }

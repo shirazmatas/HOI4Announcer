@@ -29,7 +29,7 @@ public class RemoveUserCommand
             {
                 Color = DiscordColor.Green,
                 Description = $"{member.DisplayName} has been removed from the game roster."
-            });
+            }, true);
         }
         else
         {

@@ -38,7 +38,7 @@ public class LeaveNationCommand
             {
                 Color = DiscordColor.Green,
                 Description = $"{context.User.Username} has left their nation."
-            });
+            }, true);
         }
         else
         {

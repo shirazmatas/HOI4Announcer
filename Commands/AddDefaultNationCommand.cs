@@ -34,6 +34,6 @@ public class AddDefaultNationCommand
         {
             Color = DiscordColor.Green,
             Description = $"Nation {nationID.ToFriendlyString()} has been added to the {factionID.ToFriendlyString()} faction roster with {maxPlayers} max players."
-        });
+        }, true);
     }
 }

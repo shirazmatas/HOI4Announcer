@@ -29,6 +29,6 @@ public class UnblockUserCommand
         {
             Color = DiscordColor.Green,
             Description = $"{user.DisplayName} has been unblocked."
-        });
+        }, true);
     }
 }
