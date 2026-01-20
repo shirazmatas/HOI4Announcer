@@ -66,6 +66,8 @@ public static class GameHandler
 
           [JsonProperty("notified")]
           public bool notified = false;
+          [JsonProperty( "winner")]
+          public string winner;
      }
 
      public static Game currentGame = null;
