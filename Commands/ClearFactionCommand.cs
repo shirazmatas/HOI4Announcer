@@ -16,8 +16,20 @@ public class ClearFactionCommand
             return;
         }
 
+        bool success = false;
         // Clear from current game
+        if (GameHandler.HasActiveGame())
+        {
+            success = await GameHandler.ClearFaction(factionID);
+        }
 
-        await context.RespondAsync($"Faction {factionID.ToFriendlyString()} and its nations have been removed.");
+        if (success)
+        {
+            await context.RespondAsync($"Faction {factionID.ToFriendlyString()} and its nations have been removed from the current game.");
+        }
+        else
+        {
+            await context.RespondAsync($"Failed to clear faction {factionID.ToFriendlyString()}. Does it exist in the current game?");
+        }
     }
 }

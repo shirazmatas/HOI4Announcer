@@ -16,20 +16,21 @@ public class LockGameCommand
                 return;
             }
 
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "games");
-            string lockfilepath = Path.Combine(path, "game.lock");
-
-            if (File.Exists(lockfilepath))
+            if (GameHandler.currentGame.locked)
             {
                 await context.RespondAsync("Game is already locked.");
                 return;
             }
 
-            // Ensure the games directory exists
-            Directory.CreateDirectory(path);
-
-            File.WriteAllText(lockfilepath, "locked");
-            await context.RespondAsync("✅ Game has been locked. Only moderators can make changes to the roster.");
+            bool success = await GameHandler.SetLocked(true);
+            if (success)
+            {
+                await context.RespondAsync("✅ Game has been locked. Only moderators can make changes to the roster.");
+            }
+            else
+            {
+                await context.RespondAsync("❌ Failed to lock the game.");
+            }
         }
         catch (Exception ex)
         {

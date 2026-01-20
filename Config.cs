@@ -14,6 +14,7 @@ namespace HOI4Announcer
 			public ulong gameChannel = 0;
 			public List<ulong> staffRoles = new List<ulong>();
 			public List<ulong> userRoles = new List<ulong>();
+			public List<ulong> blockedUsers = new List<ulong>();
 		}
 		public Bot bot = new Bot();
 	}
@@ -44,6 +45,13 @@ namespace HOI4Announcer
 			config = deserializer.Deserialize<Config>(new StreamReader(stream));
 
 			loaded = true;
+		}
+
+		public static void SaveConfig()
+		{
+			ISerializer serializer = new SerializerBuilder().WithNamingConvention(HyphenatedNamingConvention.Instance).Build();
+			string yaml = serializer.Serialize(config);
+			File.WriteAllText(configPath, yaml);
 		}
 		public static bool IsStaff(DiscordMember member)
 		{

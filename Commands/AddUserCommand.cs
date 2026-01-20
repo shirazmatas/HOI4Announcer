@@ -19,8 +19,21 @@ public class AddUserCommand
         {
             if (GameHandler.HasActiveGame())
             {
-                GameHandler.AddPlayerToNation(nation, user.DisplayName, user.Id);
-                await context.RespondAsync($"{user.Mention} has been assigned to {nation.ToFriendlyString()}.");
+                if (ConfigParser.config.bot.blockedUsers != null && ConfigParser.config.bot.blockedUsers.Contains(user.Id))
+                {
+                    await context.RespondAsync($"{user.DisplayName} is blocked from participating in games.");
+                    return;
+                }
+
+                bool success = await GameHandler.AddPlayerToNation(nation, user.DisplayName, user.Id);
+                if (success)
+                {
+                    await context.RespondAsync($"{user.Mention} has been assigned to {nation.ToFriendlyString()}.");
+                }
+                else
+                {
+                    await context.RespondAsync($"Failed to assign {user.DisplayName} to {nation.ToFriendlyString()}. Does the nation exist in the current game?");
+                }
             }
             else
             {
@@ -29,7 +42,7 @@ public class AddUserCommand
         }
         catch (Exception ex)
         {
-            await context.RespondAsync($"An error occurred: {ex.Message}");
+            await context.RespondAsync($"❌ Error: {ex.Message}");
         }
     }
 }

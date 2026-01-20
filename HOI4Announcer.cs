@@ -109,17 +109,20 @@ internal class HOI4Announcer
             [
                 typeof(AddNationCommand),
                 typeof(AddUserCommand),
-                //typeof(BlockUserCommand),
-                //typeof(EndGameCommand),
+                typeof(BlockUserCommand),
+                typeof(EndGameCommand),
                 typeof(JoinNationCommand),
-                //typeof(LeaveNationCommand),
-                //typeof(LockGameCommand),
+                typeof(LeaveNationCommand),
+                typeof(LockGameCommand),
                 typeof(NewGameCommand),
                 typeof(ClearFactionCommand),
                 typeof(RemoveNationCommand),
-                //typeof(RemoveUserCommand),
-                //typeof(UnblockUserCommand),
-                //typeof(UnlockGameCommand)
+                typeof(RemoveUserCommand),
+                typeof(UnblockUserCommand),
+                typeof(UnlockGameCommand),
+                typeof(AddDefaultNationCommand),
+                typeof(RemoveDefaultNationCommand),
+                typeof(ClearDefaultFactionCommand)
             ]);
             extension.AddProcessor(new SlashCommandProcessor());
             extension.CommandErrored += EventHandler.OnCommandError;

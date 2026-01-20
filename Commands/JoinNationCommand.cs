@@ -15,17 +15,42 @@ public class JoinNationCommand
     {
         try
         {
+            if (!GameHandler.HasActiveGame())
+            {
+                await context.RespondAsync("There is no active game.");
+                return;
+            }
+
+            if (GameHandler.currentGame.locked)
+            {
+                await context.RespondAsync("The game is locked. You cannot join a nation.");
+                return;
+            }
+
+            if (ConfigParser.config.bot.blockedUsers != null && ConfigParser.config.bot.blockedUsers.Contains(context.User.Id))
+            {
+                await context.RespondAsync("You are blocked from participating in games.");
+                return;
+            }
+
             // Add player to the nation in current_game.json
             string playerName = context.User.Username;
             ulong playerId = context.User.Id;
-            // TODO: Limit players if there is already too many players in a nation.
-            GameHandler.AddPlayerToNation(nation, playerName, playerId);
+            
+            bool success = await GameHandler.AddPlayerToNation(nation, playerName, playerId);
 
-            await context.RespondAsync($"{playerName} has been added to {nation.ToFriendlyString()}.");
+            if (success)
+            {
+                await context.RespondAsync($"{playerName} has joined {nation.ToFriendlyString()}.");
+            }
+            else
+            {
+                await context.RespondAsync($"Failed to join {nation.ToFriendlyString()}. Does the nation exist in the current game?");
+            }
         }
         catch (Exception ex)
         {
-            await context.RespondAsync($"An error occurred: {ex.Message}");
+            await context.RespondAsync($"❌ Error: {ex.Message}");
         }
     }
 }

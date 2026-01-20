@@ -10,24 +10,20 @@ public class AddDefaultNationCommand
     public async Task OnExecute(CommandContext context,
         [Parameter("nation")][Description("The nation to add")] NationID nationID,
         [Parameter("faction")][Description("The faction of the nation")] FactionID factionID,
-        [Parameter("maxplayers")] [Description("The maximum number of players allowed for this nation")] int maxPlayers = 1)
+        [Parameter("maxplayers")][Description("The maximum number of players allowed for this nation")] int maxPlayers = 1)
     {
-        FactionsConfig.Faction faction = FactionsHandler.GetFaction(factionID);
-
-        if (faction == null)
+        // Check if nation already exists in ANY faction
+        foreach (var f in FactionsHandler.config.factions)
         {
-            await context.RespondAsync($"Error: Faction {factionID} does not exist.");
-            return;
+            if (f.nations.Any(n => n.id == nationID))
+            {
+                await context.RespondAsync($"Error: Nation {nationID.ToFriendlyString()} already exists in faction {f.id.ToFriendlyString()}.");
+                return;
+            }
         }
 
-        if (faction.nations.Any(n => n.id == nationID))
-        {
-            await context.RespondAsync($"Error: Nation {nationID.ToFriendlyString()} already exists in faction {factionID.ToFriendlyString()}.");
-            return;
-        }
+        FactionsHandler.AddNation(factionID, nationID, maxPlayers);
 
-        FactionsHandler.AddNation(faction.id, nationID);
-
-        await context.RespondAsync($"Nation {nationID.ToFriendlyString()} has been added to the {factionID.ToFriendlyString()} faction.");
+        await context.RespondAsync($"Nation {nationID.ToFriendlyString()} has been added to the {factionID.ToFriendlyString()} faction roster with {maxPlayers} max players.");
     }
 }

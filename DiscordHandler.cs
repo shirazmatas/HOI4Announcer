@@ -56,20 +56,18 @@ public static class DiscordHandler
             List<string> nationList = [];
             foreach (GameHandler.Nation nation in faction.nations)
             {
-                if (nation.players != null && nation.players.Count != 0)
-                {
-                    string playerTags = string.Join(' ', nation.players.Select(player => player.Tag));
-                    nationList.Add($"{nation.id.ToFriendlyString()}: {playerTags}");
-                }
-                else
-                {
-                    nationList.Add($"{nation.id.ToFriendlyString()}: -");
-                }
+                int playerCount = nation.players?.Count ?? 0;
+                int maxPlayers = nation.maxPlayers;
+                string playerInfo = (nation.players != null && nation.players.Count > 0)
+                    ? string.Join(' ', nation.players.Select(player => player.Tag))
+                    : "-";
+
+                nationList.Add($"{nation.id.ToFriendlyString()} ({playerCount}/{maxPlayers}): {playerInfo}");
             }
 
             if (nationList.Count > 0)
             {
-                gameInfo.AddField(faction.id.ToFriendlyString(), string.Join('\n', nationList));
+                gameInfo.AddField(faction.id.ToFriendlyString(), string.Join('\n', nationList), true);
             }
         }
 

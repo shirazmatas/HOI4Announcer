@@ -10,15 +10,7 @@ public class RemoveNationCommand
     public async Task OnExecute(CommandContext context,
         [Parameter("nation")][Description("The nation to remove")] NationID nationID)
     {
-        bool nationExists = false;
-        foreach (var f in FactionsHandler.config.factions)
-        {
-            if (f.nations.Any(n => n.id == nationID))
-            {
-                nationExists = true;
-                break;
-            }
-        }
+        bool nationExists = FactionsHandler.config.factions.Any(f => f.nations.Any(n => n.id == nationID));
 
         if (!nationExists)
         {
@@ -26,12 +18,19 @@ public class RemoveNationCommand
             return;
         }
 
+        bool success = false;
         if (GameHandler.HasActiveGame())
         {
-            // Add also to currentGame.json
-            GameHandler.RemoveNation(nationID);
+            success = await GameHandler.RemoveNation(nationID);
         }
 
-        await context.RespondAsync($"Nation {nationID.ToFriendlyString()} has been removed from the roster.");
+        if (success)
+        {
+            await context.RespondAsync($"Nation {nationID.ToFriendlyString()} has been removed from the roster.");
+        }
+        else
+        {
+             await context.RespondAsync($"Failed to remove nation {nationID.ToFriendlyString()}. Does it exist in the current game?");
+        }
     }
 }

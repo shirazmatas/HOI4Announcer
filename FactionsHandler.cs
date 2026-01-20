@@ -20,6 +20,9 @@ namespace HOI4Announcer;
             [JsonConverter(typeof(StringEnumConverter))]
             [JsonProperty("id")]
             public NationID id { get; set; }
+
+            [JsonProperty("max-players")]
+            public int maxPlayers { get; set; } = 1;
         }
 
         [JsonProperty("factions")]
@@ -43,14 +46,7 @@ public static class FactionsHandler
 
     public static FactionsConfig.Faction GetFaction(FactionID faction)
     {
-        return config.factions.FirstOrDefault(f => f.id == faction) ?? new FactionsConfig.Faction() { id = faction };
-    }
-
-    public static void AddFaction(FactionID id)
-    {
-        if (config.factions.Any(f => f.id == id)) return;
-        config.factions.Add(new FactionsConfig.Faction { id = id });
-        Save();
+        return config.factions.FirstOrDefault(f => f.id == faction);
     }
 
     public static void ClearFaction(FactionID id)
@@ -59,17 +55,16 @@ public static class FactionsHandler
         Save();
     }
 
-    public static void AddNation(FactionID factionID, NationID nation)
+    public static void AddNation(FactionID factionID, NationID nation, int maxPlayers = 1)
     {
-        // TODO: error when nation is already in a faction maybe?
         RemoveNation(nation);
         FactionsConfig.Faction faction = GetFaction(factionID);
         if (faction == null)
         {
-            AddFaction(factionID);
+            config.factions.Add(new FactionsConfig.Faction { id = factionID });
             faction = GetFaction(factionID);
         }
-        faction.nations.Add(new FactionsConfig.Nation { id = nation });
+        faction.nations.Add(new FactionsConfig.Nation { id = nation, maxPlayers = maxPlayers });
         Save();
     }
 
@@ -80,6 +75,20 @@ public static class FactionsHandler
             faction.nations.RemoveAll(n => n.id == nation);
         }
         Save();
+    }
+
+    public static void SetMaxPlayers(NationID nation, int maxPlayers)
+    {
+        foreach (FactionsConfig.Faction faction in config.factions)
+        {
+            FactionsConfig.Nation n = faction.nations.FirstOrDefault(n => n.id == nation);
+            if (n != null)
+            {
+                n.maxPlayers = maxPlayers;
+                Save();
+                return;
+            }
+        }
     }
 }
 

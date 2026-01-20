@@ -12,26 +12,21 @@ public class AddNationCommand
         [Parameter("faction")][Description("The faction of the nation")] FactionID factionID,
         [Parameter("maxplayers")] [Description("The maximum number of players allowed for this nation")] int maxPlayers = 1)
     {
-        // TODO: change this logic
-        FactionsConfig.Faction faction = FactionsHandler.GetFaction(factionID);
-
-        if (faction == null)
+        if (!GameHandler.HasActiveGame())
         {
-            await context.RespondAsync($"Error: Faction {factionID} does not exist.");
+            await context.RespondAsync($"Error: No active game found. Please start a game first.");
             return;
         }
 
-        if (faction.nations.Any(n => n.id == nationID))
-        {
-            await context.RespondAsync($"Error: Nation {nationID.ToFriendlyString()} already exists in faction {factionID.ToFriendlyString()}.");
-            return;
-        }
-        if (GameHandler.HasActiveGame())
-        {
-            // Add also to currentGame.json
-            GameHandler.AddNation(nationID, factionID);
-        }
+        bool success = await GameHandler.AddNation(nationID, factionID, maxPlayers);
 
-        await context.RespondAsync($"Nation {nationID.ToFriendlyString()} has been added to the {factionID.ToFriendlyString()} faction.");
+        if (success)
+        {
+            await context.RespondAsync($"Nation {nationID.ToFriendlyString()} has been added to the {factionID.ToFriendlyString()} faction.");
+        }
+        else
+        {
+            await context.RespondAsync($"Failed to add nation {nationID.ToFriendlyString()}. It might already exist in the game.");
+        }
     }
 }

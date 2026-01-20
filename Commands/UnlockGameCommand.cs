@@ -12,7 +12,26 @@ public class UnlockGameCommand
     [Description("Allow players to join nations again")]
     public async Task OnExecute(CommandContext context)
     {
-        GameHandler.SetLocked(false);
-        // Edit existing discord message.
+        if (!GameHandler.HasActiveGame())
+        {
+            await context.RespondAsync("No active game to unlock.");
+            return;
+        }
+
+        if (!GameHandler.currentGame.locked)
+        {
+            await context.RespondAsync("Game is already unlocked.");
+            return;
+        }
+
+        bool success = await GameHandler.SetLocked(false);
+        if (success)
+        {
+            await context.RespondAsync("✅ Game has been unlocked. Players can join nations again.");
+        }
+        else
+        {
+            await context.RespondAsync("❌ Failed to unlock the game.");
+        }
     }
 }

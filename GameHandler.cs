@@ -11,6 +11,7 @@ public static class GameHandler
           [JsonConverter(typeof(StringEnumConverter))]
           [JsonProperty("id")]
           public FactionID id;
+
           [JsonProperty("nations")]
           public List<Nation> nations;
      }
@@ -20,22 +21,29 @@ public static class GameHandler
           [JsonConverter(typeof(StringEnumConverter))]
           [JsonProperty("id")]
           public NationID id;
+
           [JsonProperty("players")]
           public List<Player> players;
+
+          [JsonProperty("max-players")]
+          public int maxPlayers = 1;
      }
 
      public class Player
      {
           [JsonProperty("name")]
           public string name;
+
           [JsonProperty("discord-id")]
           public ulong discordID;
+
+          [JsonIgnore]
           public string Tag => $"<@{discordID}>";
      }
 
      public class Game
      {
-          [JsonProperty("players")]
+          [JsonProperty("start-time")]
           public DateTimeOffset startTime;
 
           [JsonProperty("server-id")]
@@ -118,7 +126,7 @@ public static class GameHandler
           if (File.Exists(currentGamePath))
           {
                // Rename currentGame.json to date-time.json (of that game)
-               string archivedGamePath = $"{gameDir}/{startTime.ToString("yyyy-MM-dd_HH:ss")}.json";
+               string archivedGamePath = $"{gameDir}/{currentGame.startTime.ToString("yyyy-MM-dd_HH:mm")}.json";
                if (File.Exists(archivedGamePath))
                {
                     // If it already exists, maybe add a timestamp or just overwrite. For now, let's just move/overwrite if needed.
@@ -137,7 +145,8 @@ public static class GameHandler
                     nations = f.nations.Select(n => new Nation
                     {
                          id = n.id,
-                         players = new List<Player>()
+                         players = new List<Player>(),
+                         maxPlayers = 1 // Default to 1, or maybe we should have maxPlayers in FactionsConfig too?
                     }).ToList()
                }).ToList(),
                locked = false,
@@ -167,9 +176,9 @@ public static class GameHandler
           SaveCurrentGame();
      }*/
 
-     public static async Task AddNation(NationID nationID, FactionID factionID)
+     public static async Task<bool> AddNation(NationID nationID, FactionID factionID, int maxPlayers = 1)
      {
-          if (!HasActiveGame()) return;
+          if (!HasActiveGame()) return false;
 
           Faction faction = currentGame.factions.FirstOrDefault(f => f.id == factionID);
           if (faction == null)
@@ -178,21 +187,23 @@ public static class GameHandler
                currentGame.factions.Add(faction);
           }
 
-          if (faction.nations.Any(n => n.id == nationID)) return;
+          if (faction.nations.Any(n => n.id == nationID)) return false;
 
-          faction.nations.Add(new Nation { id = nationID, players = new List<Player>() });
+          faction.nations.Add(new Nation { id = nationID, players = new List<Player>(), maxPlayers = maxPlayers });
           SaveCurrentGame();
           await UpdateDiscordMessage();
+          return true;
      }
 
-     public static async Task SetLocked(bool locked)
+     public static async Task<bool> SetLocked(bool locked)
      {
-          if (!HasActiveGame()) return;
+          if (!HasActiveGame()) return false;
 
           currentGame.locked = locked;
           SaveCurrentGame();
 
           await UpdateDiscordMessage();
+          return true;
      }
 
      public static void SetServerID(string serverID)
@@ -213,9 +224,18 @@ public static class GameHandler
           SaveCurrentGame();
      }
 
-     public static async Task AddPlayerToNation(NationID nationId, string playerName, ulong playerId)
+     public static async Task<bool> AddPlayerToNation(NationID nationId, string playerName, ulong playerId)
      {
-          if (!HasActiveGame()) return;
+          if (!HasActiveGame()) return false;
+
+          // Remove player from any other nation first (swap logic)
+          foreach (var faction in currentGame.factions)
+          {
+               foreach (var nation in faction.nations)
+               {
+                    nation.players.RemoveAll(p => p.discordID == playerId);
+               }
+          }
 
           foreach (var faction in currentGame.factions)
           {
@@ -227,15 +247,19 @@ public static class GameHandler
                          nation.players = new List<Player>();
                     }
 
-                    // Avoid duplicate players in the same nation
-                    if (nation.players.Any(p => p.discordID == playerId)) return;
+                    if (nation.players.Count >= nation.maxPlayers)
+                    {
+                         throw new Exception($"Nation {nationId.ToFriendlyString()} is full.");
+                    }
 
                     nation.players.Add(new Player { name = playerName, discordID = playerId });
                     SaveCurrentGame();
                     await UpdateDiscordMessage();
-                    return;
+                    return true;
                }
           }
+
+          return false;
      }
 
      public static async Task UpdateDiscordMessage()
@@ -248,8 +272,107 @@ public static class GameHandler
           await DiscordHandler.UpdateGameMessage(currentGame.messageID, currentGame);
      }
 
-     public static void RemoveNation(NationID nationID)
+     public static async Task<bool> RemoveNation(NationID nationID)
      {
-          throw new NotImplementedException();
+          if (!HasActiveGame()) return false;
+
+          foreach (var faction in currentGame.factions)
+          {
+               var nation = faction.nations.FirstOrDefault(n => n.id == nationID);
+               if (nation != null)
+               {
+                    faction.nations.Remove(nation);
+                    SaveCurrentGame();
+                    await UpdateDiscordMessage();
+                    return true;
+               }
+          }
+
+          return false;
+     }
+
+     public static async Task<bool> RemovePlayer(ulong playerId)
+     {
+          if (!HasActiveGame()) return false;
+
+          bool changed = false;
+          foreach (var faction in currentGame.factions)
+          {
+               foreach (var nation in faction.nations)
+               {
+                    int removedCount = nation.players.RemoveAll(p => p.discordID == playerId);
+                    if (removedCount > 0)
+                    {
+                         changed = true;
+                    }
+               }
+          }
+
+          if (changed)
+          {
+               SaveCurrentGame();
+               await UpdateDiscordMessage();
+               return true;
+          }
+
+          return false;
+     }
+
+     public static async Task<bool> ClearFaction(FactionID factionID)
+     {
+          if (!HasActiveGame()) return false;
+
+          var faction = currentGame.factions.FirstOrDefault(f => f.id == factionID);
+          if (faction != null)
+          {
+               faction.nations.Clear();
+               SaveCurrentGame();
+               await UpdateDiscordMessage();
+               return true;
+          }
+
+          return false;
+     }
+
+     public static async Task<bool> EndGame()
+     {
+          if (!HasActiveGame()) return false;
+
+          string currentGamePath = $"{gameDir}/{currentGameFile}";
+          if (File.Exists(currentGamePath))
+          {
+               string archivedGamePath = $"{gameDir}/{currentGame.startTime.ToString("yyyy-MM-dd_HH-mm")}_ended.json";
+               if (File.Exists(archivedGamePath))
+               {
+                    File.Delete(archivedGamePath);
+               }
+               File.Move(currentGamePath, archivedGamePath);
+               currentGame = null;
+               return true;
+          }
+
+          currentGame = null;
+          return false;
+          // Note: The Discord message update is handled by the command usually,
+          // but we set currentGame to null so no more updates can happen to it.
+     }
+
+     public static async Task<bool> SetMaxPlayers(NationID nationID, int maxPlayers)
+     {
+          if (!HasActiveGame()) return false;
+
+          foreach (var faction in currentGame.factions)
+          {
+               var nation = faction.nations.FirstOrDefault(n => n.id == nationID);
+               if (nation != null)
+               {
+                    nation.maxPlayers = maxPlayers;
+                    SaveCurrentGame();
+                    await UpdateDiscordMessage();
+                    return true;
+               }
+          }
+
+          return false;
      }
 }
