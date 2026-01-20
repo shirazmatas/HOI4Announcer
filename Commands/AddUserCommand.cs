@@ -17,16 +17,19 @@ public class AddUserCommand
     {
         try
         {
-            // Check if nation exists in examplegame.json
             if (GameHandler.HasActiveGame())
             {
-                // Add User to currentGame.json
-                //GameHandler.AddUser(user.Id, nation.ToString());
+                GameHandler.AddPlayerToNation(nation, user.DisplayName, user.Id);
+                await context.RespondAsync($"{user.Mention} has been assigned to {nation.ToFriendlyString()}.");
+            }
+            else
+            {
+                await context.RespondAsync("There is no active game.");
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-
+            await context.RespondAsync($"An error occurred: {ex.Message}");
         }
     }
 }

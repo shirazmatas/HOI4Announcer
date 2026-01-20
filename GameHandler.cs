@@ -167,7 +167,7 @@ public static class GameHandler
           SaveCurrentGame();
      }*/
 
-     public static void AddNation(NationID nationID, FactionID factionID)
+     public static async Task AddNation(NationID nationID, FactionID factionID)
      {
           if (!HasActiveGame()) return;
 
@@ -182,17 +182,17 @@ public static class GameHandler
 
           faction.nations.Add(new Nation { id = nationID, players = new List<Player>() });
           SaveCurrentGame();
-          UpdateDiscordMessage();
+          await UpdateDiscordMessage();
      }
 
-     public static void SetLocked(bool locked)
+     public static async Task SetLocked(bool locked)
      {
           if (!HasActiveGame()) return;
 
           currentGame.locked = locked;
           SaveCurrentGame();
 
-          UpdateDiscordMessage();
+          await UpdateDiscordMessage();
      }
 
      public static void SetServerID(string serverID)
@@ -213,19 +213,43 @@ public static class GameHandler
           SaveCurrentGame();
      }
 
-     public static void AddPlayerToNation(NationID nation, string playerName, ulong playerId)
+     public static async Task AddPlayerToNation(NationID nationId, string playerName, ulong playerId)
      {
-          throw new NotImplementedException();
+          if (!HasActiveGame()) return;
+
+          foreach (var faction in currentGame.factions)
+          {
+               var nation = faction.nations.FirstOrDefault(n => n.id == nationId);
+               if (nation != null)
+               {
+                    if (nation.players == null)
+                    {
+                         nation.players = new List<Player>();
+                    }
+
+                    // Avoid duplicate players in the same nation
+                    if (nation.players.Any(p => p.discordID == playerId)) return;
+
+                    nation.players.Add(new Player { name = playerName, discordID = playerId });
+                    SaveCurrentGame();
+                    await UpdateDiscordMessage();
+                    return;
+               }
+          }
      }
 
-     public static void UpdateDiscordMessage()
+     public static async Task UpdateDiscordMessage()
      {
           if (!HasActiveGame() || currentGame.messageID == 0)
           {
                return;
           }
 
-          DiscordHandler.UpdateGameMessage(currentGame.messageID, currentGame);
+          await DiscordHandler.UpdateGameMessage(currentGame.messageID, currentGame);
      }
 
+     public static void RemoveNation(NationID nationID)
+     {
+          throw new NotImplementedException();
+     }
 }

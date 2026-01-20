@@ -3,10 +3,10 @@ using System.ComponentModel;
 
 namespace HOI4Announcer.Commands;
 
-public class RemoveFactionCommand
+public class ClearDefaultFactionCommand
 {
-    [Command("removefaction")]
-    [Description("Remove a faction and all its nations from the roster")]
+    [Command("cleardefaultfaction")]
+    [Description("Clear all nations from a faction")]
     public async Task OnExecute(CommandContext context,
         [Parameter("faction")][Description("The faction to remove")] FactionID factionID)
     {
@@ -16,7 +16,7 @@ public class RemoveFactionCommand
             return;
         }
 
-        FactionsHandler.RemoveFaction(factionID);
+        FactionsHandler.ClearFaction(factionID);
 
         await context.RespondAsync($"Faction {factionID.ToFriendlyString()} and its nations have been removed.");
     }

@@ -107,16 +107,15 @@ internal class HOI4Announcer
         {
             extension.AddCommands(
             [
-                typeof(AddFactionCommand),
                 typeof(AddNationCommand),
-                //typeof(AddUserCommand),
+                typeof(AddUserCommand),
                 //typeof(BlockUserCommand),
                 //typeof(EndGameCommand),
-                //typeof(JoinNationCommand),
+                typeof(JoinNationCommand),
                 //typeof(LeaveNationCommand),
                 //typeof(LockGameCommand),
                 typeof(NewGameCommand),
-                typeof(RemoveFactionCommand),
+                typeof(ClearFactionCommand),
                 typeof(RemoveNationCommand),
                 //typeof(RemoveUserCommand),
                 //typeof(UnblockUserCommand),

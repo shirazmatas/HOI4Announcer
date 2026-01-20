@@ -20,9 +20,6 @@
         },
         {
           "id": "Australia"
-        },
-        {
-          "id": "Estonia"
         }
       ]
     },
@@ -59,18 +56,18 @@
           "id": "Finland"
         },
         {
-          "id": "Bhutan"
+          "id": "Belgium"
+        },
+        {
+          "id": "Estonia"
         }
       ]
     },
     {
-      "id": "GEACS",
+      "id": "Independent",
       "nations": [
         {
-          "id": "Japan"
-        },
-        {
-          "id": "Manchukuo"
+          "id": "Bhutan"
         }
       ]
     }

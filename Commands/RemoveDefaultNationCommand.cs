@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 namespace HOI4Announcer.Commands;
 
-public class RemoveNationCommand
+public class RemoveDefaultNationCommand
 {
-    [Command("removenation")]
+    [Command("removedefaultnation")]
     [Description("Remove a nation from the roster of playable nations")]
     public async Task OnExecute(CommandContext context,
         [Parameter("nation")][Description("The nation to remove")] NationID nationID)
@@ -26,11 +26,7 @@ public class RemoveNationCommand
             return;
         }
 
-        if (GameHandler.HasActiveGame())
-        {
-            // Add also to currentGame.json
-            GameHandler.RemoveNation(nationID);
-        }
+        FactionsHandler.RemoveNation(nationID);
 
         await context.RespondAsync($"Nation {nationID.ToFriendlyString()} has been removed from the roster.");
     }

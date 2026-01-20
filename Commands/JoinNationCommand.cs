@@ -18,10 +18,10 @@ public class JoinNationCommand
             // Add player to the nation in current_game.json
             string playerName = context.User.Username;
             ulong playerId = context.User.Id;
-
+            // TODO: Limit players if there is already too many players in a nation.
             GameHandler.AddPlayerToNation(nation, playerName, playerId);
 
-            await context.RespondAsync($"{playerName} has been added to {nation}.");
+            await context.RespondAsync($"{playerName} has been added to {nation.ToFriendlyString()}.");
         }
         catch (Exception ex)
         {
