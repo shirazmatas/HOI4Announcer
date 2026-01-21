@@ -63,14 +63,14 @@ ENTRYPOINT ["dotnet", "HOI4Announcer.dll"]
 
 ## Commands Usage
 
-The bot uses Discord Slash Commands. Below is a list of available commands:
+The bot uses Discord Slash Commands. Below is a list of (some) available commands:
 
 ### Game Management
 - `/newgame <starttime>`: Start a new game with a specified start time (YYYY-MM-DD HH:MM).
 - `/setgametime <starttime>`: Update the start time of the current game.
 - `/lockgame`: Lock the current game to prevent more players from joining.
 - `/unlockgame`: Unlock the current game.
-- `/endgame`: End the current game and clear the status.
+- `/endgame [winner]`: End the current game and clear the status. Add a winner to announce in chat and to write into the savefile.
 - `/setnotification <minutes>`: Set how many minutes before the start time players should be notified.
 
 ### Player Commands
