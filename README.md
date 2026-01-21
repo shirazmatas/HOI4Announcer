@@ -124,4 +124,4 @@ Code is partly generated through Jetbrains AI using Junie to generate simple, re
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details (if applicable).
+This project is not licensed yet, pending a choice- see the [LICENSE](LICENSE) file for details (when available).
