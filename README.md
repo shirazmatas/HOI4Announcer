@@ -117,6 +117,11 @@ Contributions are welcome! If you'd like to improve HOI4 Announcer, please follo
 
 Please ensure your code is well-documented and any new commands are added to the README.
 
+## Acknowledgments
+
+I would like to thank Karl "KarlOfDuty" Essinger for his contributions. A lot of the code is based on his previous work [RoleBoi](https://github.com/KarlOfDuty/RoleBoi) and he has given plenty of mentoring and guidance in the execution of this project. 
+Code is partly generated through Jetbrains AI using Junie to generate simple, repetitive segments.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details (if applicable).
