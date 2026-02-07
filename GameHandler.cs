@@ -155,7 +155,7 @@ public static class GameHandler
                     {
                          id = n.id,
                          players = new List<Player>(),
-                         maxPlayers = 1 // Default to 1, or maybe we should have maxPlayers in FactionsConfig too?
+                         maxPlayers = n.maxPlayers <= 0 ? 1 : n.maxPlayers
                     }).ToList()
                }).ToList(),
                locked = false,
