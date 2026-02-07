@@ -1,3 +1,5 @@
+using System;
+using System.Threading;
 using Microsoft.Extensions.Logging;
 using DSharpPlus;
 using DSharpPlus.Exceptions;

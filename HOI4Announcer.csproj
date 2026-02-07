@@ -2,8 +2,26 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <Version>1.0.1</Version>
         <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <AssemblyName>HOI4Announcer</AssemblyName>
+        <StartupObject>HOI4Announcer.HOI4Announcer</StartupObject>
+        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+        <PublishSingleFile>true</PublishSingleFile>
+        <TrimMode>partial</TrimMode>
+        <DebugType>embedded</DebugType>
+
+        <Authors>Shirazmatas</Authors>
+        <Description>Hoi4 Rigger</Description>
+        <NeutralLanguage>en</NeutralLanguage>
+        <RepositoryType>Git</RepositoryType>
+        <RepositoryUrl>https://github.com/shirazmatas/HOI4Announcer/</RepositoryUrl>
+
+        <PackageIconUrl>https://karlofduty.com/img/tardisIcon.jpg</PackageIconUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageProjectUrl>https://github.com/shirazmatas/HOI4Announcer/</PackageProjectUrl>
+        <PackageVersion>1.0.1</PackageVersion>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,7 +32,7 @@
 
     <ItemGroup>
         <EmbeddedResource Include="default_config.yml" />
-        <None Include="factions.json" />
+        <EmbeddedResource Include="default_factions.json" />
     </ItemGroup>
 
 </Project>

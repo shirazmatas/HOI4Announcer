@@ -2,6 +2,7 @@
 using DSharpPlus.Commands.Processors.SlashCommands;
 using DSharpPlus.Entities;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace HOI4Announcer.Commands;
 

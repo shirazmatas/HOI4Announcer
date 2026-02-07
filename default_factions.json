@@ -26,10 +26,6 @@
         {
           "id": "Australia",
           "max-players": 1
-        },
-        {
-          "id": "Afghanistan",
-          "max-players": 3
         }
       ]
     },
@@ -42,7 +38,7 @@
         },
         {
           "id": "Mongolia",
-          "max-players": 2
+          "max-players": 1
         }
       ]
     },
@@ -51,7 +47,7 @@
       "nations": [
         {
           "id": "German_Reich",
-          "max-players": 1
+          "max-players": 2
         },
         {
           "id": "Italy",
@@ -71,27 +67,6 @@
         },
         {
           "id": "Finland",
-          "max-players": 1
-        },
-        {
-          "id": "Belgium",
-          "max-players": 1
-        },
-        {
-          "id": "Estonia",
-          "max-players": 1
-        },
-        {
-          "id": "Bolivian_Republic",
-          "max-players": 1
-        }
-      ]
-    },
-    {
-      "id": "Independent",
-      "nations": [
-        {
-          "id": "Bhutan",
           "max-players": 1
         }
       ]

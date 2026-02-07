@@ -1,4 +1,7 @@
+using System;
+using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.Commands;
 using DSharpPlus.Commands.Processors.SlashCommands;

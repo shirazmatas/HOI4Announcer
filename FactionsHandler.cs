@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace HOI4Announcer;
@@ -32,16 +35,21 @@ namespace HOI4Announcer;
 public static class FactionsHandler
 {
     public static FactionsConfig config { get; private set; } = null;
+    private static string configPath => Directory.GetCurrentDirectory() + "/factions.json";
 
     public static void Load()
     {
-        Logger.Log("Loading factions config \"" + Directory.GetCurrentDirectory() + "/factions.json\"");
-        config = JsonConvert.DeserializeObject<FactionsConfig>(File.ReadAllText($"{Directory.GetCurrentDirectory()}/factions.json"));
+        Logger.Log($"Loading factions config \"{configPath}\"");
+        if (!File.Exists(configPath))
+        {
+            File.WriteAllText(configPath, Utilities.ReadManifestData("default_factions.json"));
+        }
+        config = JsonConvert.DeserializeObject<FactionsConfig>(File.ReadAllText(configPath));
     }
 
     public static void Save()
     {
-        File.WriteAllText($"{Directory.GetCurrentDirectory()}/factions.json", JsonConvert.SerializeObject(config, Formatting.Indented));
+        File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
     }
 
     public static FactionsConfig.Faction GetFaction(FactionID faction)

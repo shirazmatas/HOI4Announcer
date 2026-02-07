@@ -1,4 +1,7 @@
-﻿using DSharpPlus;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using DSharpPlus;
 using DSharpPlus.Commands;
 using DSharpPlus.Commands.ContextChecks;
 using DSharpPlus.Commands.EventArgs;

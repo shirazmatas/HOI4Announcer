@@ -3,10 +3,4 @@
   token: "<add-token-here>"
   # Channel where ticket logs are posted (recommended)
   log-channel: 000000000000000000
-  game-channel: 000000000000000000 
-  
-  staff-roles: 
-    - 000000000000000000
-    - 000000000000000000
-  user-roles:  
-    - 000000000000000000
+  game-channel: 000000000000000000

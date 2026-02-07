@@ -1,5 +1,6 @@
 ﻿using DSharpPlus.Commands;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using DSharpPlus.Entities;
 using DSharpPlus.Commands.ContextChecks;
 using DSharpPlus.Commands.Processors.SlashCommands;
