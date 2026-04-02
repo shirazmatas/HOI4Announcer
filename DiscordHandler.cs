@@ -124,8 +124,11 @@ public static class DiscordHandler
                 "https://cdn2.steamgriddb.com/icon_thumb/e2d988c728d061b916697ba7f095f98c.png")
             .WithTitle("HOI4 Current Game")
             .WithColor(game.locked ? DiscordColor.Red : DiscordColor.Green)
-            .WithDescription($"Game on {Utilities.DiscordRelativeTime(game.startTime)}!")
-            .WithFooter("This action was done by KARL (Kaotic Artificial Rider LLM)");
+            .WithDescription($"""
+                              Game on {Utilities.DiscordRelativeTime(game.startTime)}!
+                              Game ID: {game.gameID}
+                              """)
+            .WithFooter("This action was done by MCBB (Matiasole Can't Be Bothered)");
 
         if (game.notificationMinutes >= 0)
         {

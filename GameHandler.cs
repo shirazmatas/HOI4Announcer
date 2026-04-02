@@ -73,6 +73,8 @@ public static class GameHandler
           public bool notified = false;
           [JsonProperty( "winner")]
           public string winner;
+          [JsonProperty("gameID")]
+          public string gameID;
      }
 
      public static Game currentGame = null;
@@ -164,7 +166,8 @@ public static class GameHandler
                     }).ToList()
                }).ToList(),
                locked = false,
-               messageID = 0
+               messageID = 0,
+               gameID = "To be added"
           };
           SaveCurrentGame();
           return currentGame;

@@ -14,7 +14,20 @@ public class RemoveNationCommand
     public async Task OnExecute(SlashCommandContext context,
         [Parameter("nation")][Description("The nation to remove")] NationID nationID)
     {
-        bool nationExists = FactionsHandler.config.factions.Any(f => f.nations.Any(n => n.id == nationID));
+        // Check if a game exists
+        if (!GameHandler.HasActiveGame())
+        {
+            await context.RespondAsync(
+                new DiscordEmbedBuilder
+                {
+                    Color = DiscordColor.Red,
+                    Description = "Error: There is no active game."
+                }, true);
+            return;
+        }
+        
+        // Check if nation exists in any faction
+        bool nationExists = GameHandler.currentGame.factions.Any(f => f.nations.Any(n => n.id == nationID));
 
         if (!nationExists)
         {
@@ -27,10 +40,7 @@ public class RemoveNationCommand
         }
 
         bool success = false;
-        if (GameHandler.HasActiveGame())
-        {
-            success = await GameHandler.RemoveNation(nationID);
-        }
+        success = await GameHandler.RemoveNation(nationID);
 
         if (success)
         {

@@ -158,7 +158,8 @@ internal class HOI4Announcer
                 typeof(SetDefaultMaxPlayersCommand),
                 typeof(SetMaxPlayersCommand),
                 typeof(SetNotificationCommand),
-                typeof(SetGameTimeCommand)
+                typeof(SetGameTimeCommand),
+                typeof(SetGameID)
             ]);
             extension.AddProcessor(new SlashCommandProcessor());
             extension.CommandErrored += EventHandler.OnCommandError;
